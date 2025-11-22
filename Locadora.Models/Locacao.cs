@@ -9,11 +9,11 @@ namespace Locadora.Models
 {
     public class Locacao
     {
-        public readonly static string INSERTLOCACAO = @"INSERT INTO tblLocacoes (ClienteID, VeiculoID, DataLocacao, DataDevolucaoPrevista, ValorDiaria, ValorTotal, Status) 
-                                                            VALUES (@ClienteID, @VeiculoID, @DataLocacao, @DataDevolucaoPrevista, @ValorDiaria, @ValorTotal, @Status)";
+        public readonly static string INSERTLOCACAO = @"INSERT INTO tblLocacoes (ClienteID, VeiculoID, DataLocacao, DataDevolucaoPrevista, ValorDiaria, Status) 
+                                                            VALUES (@ClienteID, @VeiculoID, @DataLocacao, @DataDevolucaoPrevista, @ValorDiaria, @Status)";
 
 
-        public readonly static string SELECTALLLOCACOES = "SELECT FuncionarioID, Nome, CPF, Email, Salario FROM tblFuncionarios;";
+        public readonly static string SELECTALLLOCACOES = "SELECT * FROM tblLocacoes;";
 
 
         public readonly static string SELECTLOCACAOPORID = @"SELECT Nome, CPF, Email, Salario
@@ -23,13 +23,25 @@ namespace Locadora.Models
         public readonly static string FINALIZARLOCACAO = @"DELETE FROM tblFuncionarios WHERE FuncionarioID = @FuncionarioID";
 
         public static readonly string UPDATELOCACAO = @"UPDATE tblFuncionarios SET Salario = @Salario WHERE FuncionarioID = @FuncionarioID";
-        public Locacao(int clienteID, int veiculoID, decimal valorDiaria, int diasLocacao)
+
+        public Locacao(int clienteID, int veiculoID)
         {
             ClienteID = clienteID;
             VeiculoID = veiculoID;
             DataLocacao = DateTime.Now;
-            ValorDiaria = valorDiaria;
-            ValorTotal = valorDiaria * diasLocacao;
+            ValorDiaria = Veiculo.Categoria.Diaria;
+            ValorTotal = ValorDiaria * diasLocacao;
+            DataDevolucaoPrevista = DateTime.Now.AddDays(diasLocacao);
+            Status = EStatusLocacao.Ativa;
+        }
+
+        public Locacao(int clienteID, int veiculoID, int diasLocacao)
+        {
+            ClienteID = clienteID;
+            VeiculoID = veiculoID;
+            DataLocacao = DateTime.Now;
+            ValorDiaria = Veiculo.Categoria.Diaria;
+            ValorTotal = ValorDiaria * diasLocacao;
             DataDevolucaoPrevista = DateTime.Now.AddDays(diasLocacao);
             Status = EStatusLocacao.Ativa;
         }
@@ -44,23 +56,21 @@ namespace Locadora.Models
         public decimal ValorTotal { get; set; }
         public decimal Multa { get; private set; }
         public EStatusLocacao Status { get; private set; }
-
-        public override bool Equals(object? obj)
+        public Cliente Cliente { get; private set; }
+        public Veiculo Veiculo { get; private set; }
+        public void SetLocacaoId(Guid locacaoId)
         {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            LocacaoID = locacaoId;
         }
 
         public override string ToString()
         {
-            //TODO: definir os valor de cliente e veiculo como nome e modelo
+            
             return
                     $"\nCliente ID: {ClienteID}\n" +
+                    $"Nome Cliente: {Cliente.Nome}\n" +
                     $"Veículo ID: {VeiculoID}\n" +
+                    $"Modelo Veículo: {Veiculo.Modelo}\n" +
                     $"Data de Locação: {DataLocacao}\n" +
                     $"Data de Devolução Prevista: {DataDevolucaoPrevista}\n" +
                     $"Data de Devolução Real: {DataDevolucaoReal}\n" +
@@ -71,3 +81,6 @@ namespace Locadora.Models
         }
     }
 }
+
+
+//banco uniqueidentifier NEWSEQUENTIALID

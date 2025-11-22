@@ -29,8 +29,7 @@ namespace Locadora.Controller
                     command.Parameters.AddWithValue("@VeiculoID", locacao.VeiculoID);
                     command.Parameters.AddWithValue("@DataLocacao", locacao.DataLocacao);
                     command.Parameters.AddWithValue("@DataDevolucaoPrevista", locacao.DataDevolucaoPrevista);
-                    command.Parameters.AddWithValue("@ValorDiaria", locacao.ValorDiaria);
-                    command.Parameters.AddWithValue("@ValorTotal", locacao.ValorTotal);
+                    command.Parameters.AddWithValue("@ValorDiaria", locacao.ValorDiaria);         
                     command.Parameters.AddWithValue("@Status", locacao.Status);
 
                     command.ExecuteNonQuery();
@@ -57,11 +56,10 @@ namespace Locadora.Controller
             }
         }
 
-        public void ConsultarHistoricoLocacaoes()
+        public List<Locacao> ListarLocacoes()
         {
-            throw new NotImplementedException();
+            var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         }
-
         public void FinalizarLocacao()
         {
             throw new NotImplementedException();
@@ -77,11 +75,7 @@ namespace Locadora.Controller
             throw new NotImplementedException();
         }
 
-        public List<Locacao> ListarLocacoes()
-        {
-            throw new NotImplementedException();
-        }
-
+       
         public List<Locacao> ListarTodasLocacoesEFuncionarios()
         {
             throw new NotImplementedException();

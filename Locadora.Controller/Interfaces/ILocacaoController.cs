@@ -15,7 +15,7 @@ namespace Locadora.Controller.Interfaces
         public List<Locacao> ListarLocacaoPorCliente();
         public List<Locacao> ListarLocacaoPorFuncionario();
         public List<Locacao> ListarTodasLocacoesEFuncionarios();
-        public void ConsultarHistoricoLocacaoes();
+        
 
     }
 }
