@@ -15,6 +15,7 @@ namespace Locadora.Controller
         {
             var connection = new SqlConnection(ConnectionDB.GetConnectionString());
             connection.Open();
+
             using (SqlTransaction transaction = connection.BeginTransaction())
             {
                 try
@@ -24,8 +25,7 @@ namespace Locadora.Controller
                     command.Parameters.AddWithValue("@Descricao", categoria.Descricao ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Diaria", categoria.Diaria);
 
-                    int categoriaId = Convert.ToInt32(command.ExecuteScalar());
-                    categoria.setCategoriaId(categoriaId);
+                    command.ExecuteNonQuery();
                     transaction.Commit();
 
                 }
@@ -38,6 +38,10 @@ namespace Locadora.Controller
                 {
                     transaction.Rollback();
                     throw new Exception("Erro inesperado ao adicionar categoria" + ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
                 }
             }
         }
@@ -83,6 +87,39 @@ namespace Locadora.Controller
             }
         }
 
+        public string BuscarNomeCategoriaPorId(int id)
+        {
+            var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+
+            try
+            {
+                SqlCommand command = new SqlCommand(Categoria.SELECTNOMECATEGORIAPORID, connection);
+                command.Parameters.AddWithValue("@CategoriaID", id);
+
+                string nomecategoria = String.Empty;
+
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    nomecategoria = reader["Nome"].ToString() ?? string.Empty;
+                }
+                return nomecategoria;
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar categoria." + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro inesperado ao buscar categoria." + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
         public Categoria BuscaCategoriaPorNome(string nome)
         {
             SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
@@ -120,14 +157,11 @@ namespace Locadora.Controller
                 }
 
             }
-
-
         }
-
 
         public void AtualizarDescricaoCategoria(string nome, string descricao)
         {
-            var categoriaEncontrada = BuscaCategoriaPorNome(nome);
+            Categoria categoriaEncontrada = BuscaCategoriaPorNome(nome);
             if (categoriaEncontrada is null)
             {
                 throw new Exception("Categoria não encontrada");
@@ -146,8 +180,6 @@ namespace Locadora.Controller
                    
                     command.Parameters.AddWithValue("@Descricao", categoriaEncontrada.Descricao ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@CategoriaID", categoriaEncontrada.CategoriaID);
-
-                   
 
                     command.ExecuteNonQuery();
                     transaction.Commit();
@@ -168,7 +200,6 @@ namespace Locadora.Controller
                 }
             }
         }
-
 
         public void DeletarCategoria(string nome)
         {

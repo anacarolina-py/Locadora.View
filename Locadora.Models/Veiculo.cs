@@ -8,6 +8,24 @@ namespace Locadora.Models
 {
     public class Veiculo
     {
+        public readonly static string INSERTVEICULO = @"INSERT INTO tblVeiculos (CategoriaID, Placa, Marca, Modelo, Ano, StatusVeiculo) 
+                                                        VALUES (@CategoriaID, @Placa, @Marca, @Modelo, @Ano, @StatusVeiculo)";
+
+        public readonly static string SELECTALLVEICULOS = @"SELECT CategoriaID, 
+                                                    Placa, Marca, Modelo, Ano, StatusVeiculo
+                                                    FROM tblVeiculos";
+
+        public readonly static string SELECTVEICULOPELAPLACA = @"SELECT VeiculoID, CategoriaID, 
+                                                    Placa, Marca, Modelo, Ano, StatusVeiculo
+                                                    FROM tblVeiculos
+                                                    WHERE Placa = @Placa";
+
+        public readonly static string UPDATESTATUSVEICULO = @"UPDATE tblVeiculos 
+                                                    SET StatusVeiculo = @StatusVeiculo
+                                                    WHERE VeiculoID = @VeiculoID";
+
+        public readonly static string DELETEVEICULO = @"DELETE FROM tblVeiculos
+                                                        WHERE VeiculoID = @VeiculoID";
         public Veiculo(int categoriaID, string placa, string marca, string modelo, int ano, string statusVeiculo)
         {
             CategoriaID = categoriaID;
@@ -26,6 +44,12 @@ namespace Locadora.Models
         public int Ano { get; private set; }
         public string StatusVeiculo { get; private set; }
 
+        public string? NomeCategoria { get; private set; }
+
+        public void SetNomeCategoria(string nomeCategoria)
+        {
+            NomeCategoria = nomeCategoria;
+        }
         public void SetVeiculoID(int veiculoID)
         {
             VeiculoID = veiculoID;
@@ -38,7 +62,7 @@ namespace Locadora.Models
         }
         public override string ToString()
         {
-            return $"Placa: {Placa} \nModelo: {Modelo} \nModelo: {Modelo} \nAno: {Ano} \nStatus: {StatusVeiculo}\n";
+            return $"Placa: {Placa} \nModelo: {Modelo} \nAno: {Ano} \nStatus: {StatusVeiculo}\nCategoria: {NomeCategoria}\n";
         }
     }
 }

@@ -8,15 +8,17 @@ namespace Locadora.Models
 {
     public class Categoria
     {
-        public readonly static string INSERTCATEGORIA = "INSERT INTO tblCategorias VALUES (@Nome, @Descricao, @Diaria);" +
-                                                      "SELECT SCOPE_IDENTITY();";
+        public readonly static string INSERTCATEGORIA = "INSERT INTO tblCategorias VALUES (@Nome, @Descricao, @Diaria)";
+                                                      
 
-        public readonly static string SELECTALLCATEGORIAS = "SELECT * " +
-                                                          "FROM tblCategorias;";
+        public readonly static string SELECTALLCATEGORIAS = "SELECT * FROM tblCategorias;";
 
-        public readonly static string SELECTCATEGORIAPORNOME = "SELECT * " +
-                                                               "FROM tblCategorias " +
-                                                               "WHERE Nome = @Nome";
+        public readonly static string SELECTCATEGORIAPORNOME = @"SELECT * 
+                                                               FROM tblCategorias 
+                                                               WHERE CategoriaID = @CategoriaID";
+        public readonly static string SELECTNOMECATEGORIAPORID = @"SELECT Nome
+                                                               FROM tblCategorias 
+                                                               WHERE CategoriaID = @CategoriaID";
 
         public readonly static string DELETECATEGORIA = @"DELETE FROM tblCategorias WHERE CategoriaID = @CategoriaID";
 
