@@ -1,160 +1,18 @@
 ﻿
 using Locadora.Controller;
-using Locadora.Controller;
-using Locadora.Controller.Crud;
-using Locadora.Controller.Menu;
 using Locadora.Models;
 using Locadora.Models.Enums;
 using Microsoft.Data.SqlClient;
 using Utils.DataBases;
 using Utils.Menus;
-
-
-//Funcionario func = new Funcionario("Bruce Wanny", "285646688", "batman@uol.com");
-
-
-//var funcController = new FuncionarioController();
-
-
-#region INSERT Funcionario
-//try
-//{
-//    funcController.AdicionarFuncionario(func);
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//}
-#endregion
-
-
-
-#region SELECT ALL Funcionarios
-//try
-//{
-//    var lista = funcController.ListarTodosFuncionarios();
-
-//    foreach (var f in lista)
-//    {
-//        Console.WriteLine(f);
-//    }
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//}
-#endregion
-
-
-#region UPDATE and Busca de Salario
-//try
-//{
-//    funcController.AtualizarSalarioFuncionario("batman@uol.com", 1300.90m);
-//    Console.WriteLine(funcController.BuscarFuncionarioEmail("batman@uol.com"));
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//}
-#endregion
-
-
-#region DELETE Funcionario
-//try
-//{
-//    funcController.DeletarFuncionario("batman@uol.com");
-//    Console.WriteLine("Funcionario deletado com sucesso!");
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//}
-#endregion
-
-
-
-//   ----------------                      <<<   Locação   >>>                      ----------------                      
-
-
-//var locacaoController = new LocacaoController();
-
-
-#region INSERT Veiculo
-//try
-//{
-//    var veiculo = new Veiculo(1, "XYZ-9876", "Chevrolet", "S10", 2025, EStatusVeiculo.Disponivel.ToString());
-//    veiculoController.AdicionarVeiculo(veiculo);
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine("Erro ao criar veículo: " + ex.Message);
-//}
-#endregion
-
-
-#region SELECT ALL Veiculos
-//try
-//{
-//    var veiculos = veiculoController.ListarTodosVeiculos();
-
-//    foreach (var item in veiculos)
-//    {
-//        Console.WriteLine(item);
-//    }
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//}
-#endregion
-
-
-#region SELECT BY PLACA
-//try
-//{
-//    Console.WriteLine(veiculoController.BuscarVeiculoPlaca("MNO7890"));
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//}
-#endregion
-
-
-#region DELETE Veiculo
-//try
-//{
-//    var veiculo = veiculoController.BuscarVeiculoPlaca("XYZ-9876");
-
-//    veiculoController.DeletarVeiculo(veiculo.VeiculoID);
-//    Console.WriteLine("Veiculo deletado com sucesso!");
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//}
-#endregion
-
-
-#region UPDATE Status Veículo
-//try
-//{
-//    veiculoController.AtualizarStatusVeiculo(EStatusVeiculo.Manutencao.ToString(), "MNO7890");
-//    Console.WriteLine(veiculoController.BuscarVeiculoPlaca("MNO7890"));
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine(ex.Message);
-//}
-#endregion
-
-
+using Locadora.Controller.Menus;
 
 
 var customer = new ClienteMenu();
 var category = new CategoriaMenu();
 var vehicle = new VeiculoMenu();
 var employeer = new FuncionarioMenu();
+var rental = new MenuLocacao();
 
 int opcao = 0;
 do
@@ -163,10 +21,9 @@ do
     Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
     Console.WriteLine(" |       >    Sistema Locadora de Veículos    <       |");
     Console.WriteLine(" |----------------------------------------------------|");
-    Console.WriteLine(" | [ 1 ] Locar Veículo      |   [ 2 ] Menu Exibir     |");
-    Console.WriteLine(" | [ 3 ] Menu Veículo       |   [ 4 ] Menu Categoria  |");
-    Console.WriteLine(" | [ 5 ] Menu Funcionario   |   [ 6 ] Menu Cliente    |");
-    Console.WriteLine(" | [ 7 ] Sair               |                         |");
+    Console.WriteLine(" | [ 1 ] Locar Veículo      |  [ 2 ] Menu Veículo     |");
+    Console.WriteLine(" | [ 3 ] Menu Categoria     |  [ 4 ] Menu Funcionario |");
+    Console.WriteLine(" | [ 5 ] Menu Cliente       |  [ 6 ] Sair             |");
     Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
     Console.WriteLine();
     Console.Write("  >>> Informe o menu desejado: ");
@@ -177,24 +34,21 @@ do
     switch (opcao)
     {
         case 1:
-            //
+            rental.LocacaoMenu();
             break;
         case 2:
-            //
-            break;
-        case 3:
             vehicle.MenuVeiculo();
             break;
-        case 4:
+        case 3:
             category.MenuCategoria();
             break;
-        case 5:
+        case 4:
             employeer.MenuFuncionario();
             break;
-        case 6:
+        case 5:
             customer.MenuCliente();
             break;
-        case 7:
+        case 6:
             Console.WriteLine("Encerrando o programa...");
             return;
         default:
@@ -254,16 +108,16 @@ do
 
 //var clienteController = new ClienteController();
 
-var categoriaController = new CategoriaController();
+//var categoriaController = new CategoriaController();
 
-var veiculoController = new VeiculoController();
+//var veiculoController = new VeiculoController();
 
-var funcionarioController = new FuncionarioController();
+//var funcionarioController = new FuncionarioController();
 
-var locacaoController = new LocacaoController();
+//var locacaoController = new LocacaoController();
 
 
-var funcionarios = new List<int>();
+//var funcionarios = new List<int>();
 
 //var locacao = new Locacao(2, 5, 100.00m, 10);
 //locacaoController.AdicionarLocacao(locacao, funcionarios);
@@ -277,31 +131,39 @@ var funcionarios = new List<int>();
 //    Console.WriteLine(locacao);
 //    Console.WriteLine("-----------------------------");
 //}
-var funcionariosComLocacoes = locacaoController.ListarFuncionariosComLocacoes();
+//var funcionariosComLocacoes = locacaoController.ListarFuncionariosComLocacoes();
+//var funcionariosLocad = new LocacaoFuncionarioController();
 
-foreach (var item in funcionariosComLocacoes)
-{
-    var funcionario = item.funcionario;
-    var locacao = item.locacao;
+//funcionariosLocad.AssociarFuncionario(
+//    Guid.Parse("4F4D433E-F36B-1410-8FD6-0088CF8AE78A"),
+//    1
+//);
 
-    Console.WriteLine($"Funcionario: {funcionario.Nome} - Salario: {funcionario.Salario}");
 
-    if (locacao != null)
-    {
-        Console.WriteLine($"LocacaoID: {locacao.LocacaoID}");
-        Console.WriteLine($"ClienteID: {locacao.ClienteID}");
-        Console.WriteLine($"VeiculoID: {locacao.VeiculoID}");
-        Console.WriteLine($"DataLocacao: {locacao.DataLocacao}");
-        Console.WriteLine($"ValorDiaria: {locacao.ValorDiaria}");
-        Console.WriteLine($"Status: {locacao.Status}");
-    }
-    else
-    {
-        Console.WriteLine("Sem locações para este funcionário.");
-    }
 
-    Console.WriteLine("-----------------------------");
-}
+//foreach (var item in funcionariosComLocacoes)
+//{
+//    var funcionario = item.funcionario;
+//    var locacao = item.locacao;
+
+//    Console.WriteLine($"Funcionario: {funcionario.Nome} - Salario: {funcionario.Salario}");
+
+//    if (locacao != null)
+//    {
+//        Console.WriteLine($"LocacaoID: {locacao.LocacaoID}");
+//        Console.WriteLine($"ClienteID: {locacao.ClienteID}");
+//        Console.WriteLine($"VeiculoID: {locacao.VeiculoID}");
+//        Console.WriteLine($"DataLocacao: {locacao.DataLocacao}");
+//        Console.WriteLine($"ValorDiaria: {locacao.ValorDiaria}");
+//        Console.WriteLine($"Status: {locacao.Status}");
+//    }
+//    else
+//    {
+//        Console.WriteLine("Sem locações para este funcionário.");
+//    }
+
+//    Console.WriteLine("-----------------------------");
+//}
 
 //var veiculo = veiculoController.BuscarVeiculoId(1);
 //Console.WriteLine(veiculo);

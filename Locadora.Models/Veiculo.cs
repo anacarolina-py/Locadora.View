@@ -58,7 +58,7 @@ namespace Locadora.Models
 
         public string? NomeCategoria { get; private set; }
 
-        public Categoria Categoria { get; private set; }
+        public Categoria Categoria { get; set; }
 
         public void SetNomeCategoria(string nomeCategoria)
         {

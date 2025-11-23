@@ -113,5 +113,25 @@ namespace Utils.Validadacoes
             return data;
         }
 
+        public static Guid ValidarInputGuid(string text)
+        {
+            Console.Write(text);
+            string input = Console.ReadLine()!;
+
+            while (string.IsNullOrWhiteSpace(input) || !Guid.TryParse(input, out Guid guid))
+            {
+                Console.Write("\nEntrada inválida! Digite um GUID válido ou [9] para sair: ");
+                input = Console.ReadLine()!;
+
+                if (input == "9")
+                    return Guid.Empty;
+
+                if (Guid.TryParse(input, out guid))
+                    return guid;
+            }
+
+            return Guid.Parse(input);
+        }
+
     }
 }

@@ -9,7 +9,7 @@ namespace Locadora.Controller.Interfaces
 {
     public interface ILocacaoController
     {
-        public void AdicionarLocacao(Locacao locacao);
+        public void AdicionarLocacao(Locacao locacao, List<int> funcionarios);
         public List<Locacao> ListarLocacoes();
         public void AtualizarDataDevolucaoRealLocacao(Guid id, DateTime devolucao);
         public void AtualizarStatusLocacao(Guid id, string status);

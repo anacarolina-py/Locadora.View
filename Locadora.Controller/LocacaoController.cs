@@ -14,7 +14,7 @@ namespace Locadora.Controller
 {
     public class LocacaoController : ILocacaoController
     {
-        public void AdicionarLocacao(Locacao locacao)
+        public void AdicionarLocacao(Locacao locacao, List<int> funcionarios)
         {
             using (var connection = new SqlConnection(ConnectionDB.GetConnectionString()))
             {
@@ -64,22 +64,23 @@ namespace Locadora.Controller
                         }
 
                         // associar funcionários 
-                        //if (funcionariosId != null && funcionariosId.Count > 0)
-                        //{
-                          
-                        //    foreach (var funcId in funcionariosId)
-                        //    {
-                        //        using (var command = new SqlCommand(LocacaoFuncionario.ASSOCIARFUNCIONARIO, connection, transaction))
-                        //        {
-                        //            command.Parameters.AddWithValue("@LocacaoID", locacaoId);
-                        //            command.Parameters.AddWithValue("@FuncionarioID", funcId);
-                        //            command.ExecuteNonQuery();
-                        //        }
-                        //    }
-                        //}
+                        if (funcionarios != null && funcionarios.Count > 0)
+                        {
+                            foreach (var funcId in funcionarios)
+                            {
+                                using (var cmdAssoc = new SqlCommand(LocacaoFuncionario.ASSOCIARFUNCIONARIO, connection, transaction))
+                                {
+                                    cmdAssoc.Parameters.AddWithValue("@LocacaoID", locacaoId);
+                                    cmdAssoc.Parameters.AddWithValue("@FuncionarioID", funcId);
+                                    cmdAssoc.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+
 
                         // atualizar status do veículo para alugad
-                        
+
                         using (var command = new SqlCommand(Veiculo.UPDATESTATUSVEICULO, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@StatusVeiculo", "Alugado");
@@ -106,8 +107,34 @@ namespace Locadora.Controller
                 }
             }
         }
-            
 
+        public void AtualizarValorTotalLocacao(Locacao locacao)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction())
+            {
+                try
+                {
+                    SqlCommand command = new SqlCommand(Locacao.UPDATELOCACAOVALORTOTAL, connection, transaction);
+                    command.Parameters.AddWithValue("@ValorTotal", locacao.ValorTotal);
+                    command.Parameters.AddWithValue("@LocacaoID", locacao.LocacaoID);
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+                catch (SqlException ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro ao atualizar o valor total da locação: erro ao conectar com o banco: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro ao atualizar o valor total da locação: " + ex.Message);
+                }
+            }
+        }
         public List<Locacao> ListarLocacoes()
         {
             var locacoes = new List<Locacao>();

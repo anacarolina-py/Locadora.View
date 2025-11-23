@@ -38,28 +38,14 @@ namespace Locadora.Models
                                                                             FROM tblFuncionarios f
                                                                      LEFT JOIN tblLocacaoFuncionarios lf ON f.FuncionarioID = lf.FuncionarioID
                                                                         LEFT JOIN tblLocacoes l ON lf.LocacaoID = l.LocacaoID";
-              
-                
-               
-                
-                
-                
-                
-                
-                
-               
-                
-               
-           
-
-                                                         
-
 
         public readonly static string UPDATELOCACAODEVOLUCAOREAL = @"UPDATE tblLocacoes SET DataDevolucaoReal = @DataDEvolucaoReal
                                                                         WHERE LocacaoID = @LocacaoID";
 
         public readonly static string UPDATELOCACAOSTATUS = @"UPDATE tblLocacoes SET Status = @Status 
                                                                 WHERE LocacaoID = @LocacaoID";
+
+        public readonly static string UPDATELOCACAOVALORTOTAL = "UPDATE tblLocacoes SET ValorTotal = @ValorTotal WHERE LocacaoID = @LocacaoID";
 
 
         public Locacao(int clienteID, int veiculoID, decimal valorDiaria, int diasLocacao)
@@ -106,10 +92,40 @@ namespace Locadora.Models
         {
             DataDevolucaoReal = devolucaoReal;
         }
+
+        public decimal CalcularValorFinal()
+        {
+            if (DataDevolucaoReal == null)
+                throw new Exception("A data de devolução real não foi definida.");
+
+
+            int diasTotais = (DataDevolucaoReal.Value - DataLocacao).Days;
+
+            if (diasTotais < 1)
+                diasTotais = 1;
+
+            decimal valorBase = diasTotais * ValorDiaria;
+
+
+            int diasAtraso = (DataDevolucaoReal.Value - DataDevolucaoPrevista).Days;
+
+            decimal valorMulta = 0;
+
+            if (diasAtraso > 0)
+            {
+
+                valorMulta = Multa + (diasAtraso * ValorDiaria);
+            }
+
+            this.ValorTotal = valorBase + valorMulta;
+            return valorBase + valorMulta;
+        }
+
         public override string ToString()
         {
             
-            return $"\nCliente ID: {ClienteID}\n" +
+            return 
+                    $"\nCliente ID: {ClienteID}\n" +
                     $"Nome Cliente: {Cliente.Nome}\n" +
                     $"Veículo ID: {VeiculoID}\n" +
                     $"Modelo Veículo: {Veiculo.Modelo}\n" +
