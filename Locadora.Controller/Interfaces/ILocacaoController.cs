@@ -16,8 +16,9 @@ namespace Locadora.Controller.Interfaces
         public Locacao BuscarLocacaoPorId(Guid id);
         public List<Locacao> ListarLocacaoPorCliente(int clienteID);
         public List<Locacao> ListarLocacaoPorFuncionario(int funcionarioID);
-        public List<Locacao> ListarTodasLocacoesEFuncionarios();
-        
+        public List<(Funcionario funcionario, Locacao locacao)> ListarFuncionariosComLocacoes();
+
+
 
     }
 }

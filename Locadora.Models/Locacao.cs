@@ -27,10 +27,32 @@ namespace Locadora.Models
         public readonly static string SELECTLOCACAOPORCLIENTE = "SELECT * FROM tblLocacoes WHERE ClienteID = @ClienteID";
 
         public readonly static string SELECTLOCACAOPORFUNCIONARIO = @"SELECT l.LocacaoID, l.ClienteID, l.VeiculoID, l.DataLocacao,
-                                                                        l.DataDevolucaoPrevista, l.DataDevolucaoReal, l.ValorDiaria, 
-                                                                        l.ValorTotal, l.Multa, l.Status
-                                            
-                                                            FROM tblLocacoesFuncionarios WHERE FuncionarioID = @FuncionarioID";
+                                                                        l.DataDevolucaoPrevista, l.ValorDiaria, 
+                                                                        l.ValorTotal, l.Status
+                                                                        FROM tblLocacoes l JOIN tblLocacaoFuncionarios lf
+                                                                        ON lf.LocacaoID = l.LocacaoID WHERE lf.FuncionarioID = @FuncionarioID";
+
+        public readonly static string SELECTALLLOCACOESFUNCIONARIOS = @"SELECT f.FuncionarioID, f.Nome, f.CPF, f.Email, f.Salario, l.LocacaoID,
+                                                                        l.ClienteID, l.VeiculoID, l.DataLocacao, l.DataDevolucaoPrevista,
+                                                                        l.ValorDiaria,  l.ValorTotal, l.Multa, l.Status
+                                                                            FROM tblFuncionarios f
+                                                                     LEFT JOIN tblLocacaoFuncionarios lf ON f.FuncionarioID = lf.FuncionarioID
+                                                                        LEFT JOIN tblLocacoes l ON lf.LocacaoID = l.LocacaoID";
+              
+                
+               
+                
+                
+                
+                
+                
+                
+               
+                
+               
+           
+
+                                                         
 
 
         public readonly static string UPDATELOCACAODEVOLUCAOREAL = @"UPDATE tblLocacoes SET DataDevolucaoReal = @DataDEvolucaoReal
@@ -75,6 +97,14 @@ namespace Locadora.Models
         public void SetValorDiaria(decimal valorDiaria)
         {
             ValorDiaria = valorDiaria;
+        }
+        public void SetMulta(decimal multa)
+        {
+            Multa = multa;
+        }
+        public void SetDataDevolucaoReal(DateTime devolucaoReal)
+        {
+            DataDevolucaoReal = devolucaoReal;
         }
         public override string ToString()
         {

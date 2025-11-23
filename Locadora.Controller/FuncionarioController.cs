@@ -139,9 +139,9 @@ namespace Locadora.Controller
             }
         }
 
-        public void AtualizarSalarioFuncionario(int id, decimal salario)
+        public void AtualizarSalarioFuncionario(string email, decimal salario)
         {
-            var funcionarioEncontrado = BuscarFuncionarioPorID(id);
+            var funcionarioEncontrado = BuscarFuncionarioEmail(email);
 
             if (funcionarioEncontrado == null)
             {
@@ -160,7 +160,7 @@ namespace Locadora.Controller
                 SqlCommand command = new SqlCommand(Funcionario.UPDATESALARIOFUNCIONARIO, connection);
 
                 command.Parameters.AddWithValue("@Salario", salario);
-                command.Parameters.AddWithValue("@FuncionarioID", id);
+                command.Parameters.AddWithValue("@Email", email);
 
                 command.ExecuteNonQuery();
             }
@@ -179,7 +179,7 @@ namespace Locadora.Controller
 
         }
 
-        public void DeletarFuncionario(int idFuncionario)
+        public void DeletarFuncionario(string email)
         {
             SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
             connection.Open();
@@ -190,7 +190,7 @@ namespace Locadora.Controller
 
                 try
                 {
-                    command.Parameters.AddWithValue("FuncionarioID", idFuncionario);
+                    command.Parameters.AddWithValue("Email", email);
                     command.ExecuteNonQuery();
                     transaction.Commit();
                 }
@@ -214,7 +214,47 @@ namespace Locadora.Controller
 
         }
 
+        public Funcionario BuscarFuncionarioEmail(string email)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
 
+            connection.Open();
+            try
+            {
+                SqlCommand command = new SqlCommand(Funcionario.SELECTFUNCIONARIOSPOREMAIL, connection);
+
+                command.Parameters.AddWithValue("@Email", email);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    var funcionario = new Funcionario(reader["Nome"].ToString()!,
+                                                reader["CPF"].ToString()!,
+                                                reader["Email"].ToString()!,
+                                                reader["Salario"] != DBNull.Value ?
+                                                reader.GetDecimal(4) : null
+                                                );
+
+                    funcionario.SetFuncionarioID(Convert.ToInt32(reader["FuncionarioID"]));
+
+                    return funcionario;
+                }
+                return null;
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar funcionario por email: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro inesperado ao buscar funcionario por email: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
 
     }
 

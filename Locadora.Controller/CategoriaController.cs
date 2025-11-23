@@ -201,6 +201,7 @@ namespace Locadora.Controller
             }
         }
 
+
         public void DeletarCategoria(string nome)
         {
             var categoriaEncontrada = BuscaCategoriaPorNome(nome);

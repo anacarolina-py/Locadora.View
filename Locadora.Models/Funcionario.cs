@@ -18,16 +18,19 @@ namespace Locadora.Models
                                                                FROM tblFuncionarios 
                                                                WHERE FuncionarioID = @FuncionarioID";
 
-        public readonly static string DELETEFUNCIONARIO = @"DELETE FROM tblFuncionarios WHERE FuncionarioID = @FuncionarioID";
+        public readonly static string SELECTFUNCIONARIOSPOREMAIL = @"SELECT * FROM tblFuncionarios 
+                                                                    WHERE Email = @Email";
 
-        public static readonly string UPDATESALARIOFUNCIONARIO = @"UPDATE tblFuncionarios SET Salario = @Salario WHERE FuncionarioID = @FuncionarioID";
+        public readonly static string DELETEFUNCIONARIO = @"DELETE FROM tblFuncionarios WHERE Email = @Email";
+
+        public static readonly string UPDATESALARIOFUNCIONARIO = @"UPDATE tblFuncionarios SET Salario = @Salario WHERE Email = @Email";
 
 
         public int FuncionarioID { get; private set; }
         public string Nome { get; private set; }
         public string CPF { get; private set; }
         public string Email { get; private set; }
-        public decimal Salario { get; private set; }
+        public decimal? Salario { get; private set; }
         public List<Locacao> LocacoesGerenciadas { get; set; } = new List<Locacao>();
         public Funcionario(string nome, string cPF, string email)
         {
@@ -36,7 +39,7 @@ namespace Locadora.Models
             Email = email;
         }
 
-        public Funcionario(string nome, string cPF, string email, decimal salario)
+        public Funcionario(string nome, string cPF, string email, decimal? salario)
         {
             Nome = nome;
             CPF = cPF;
