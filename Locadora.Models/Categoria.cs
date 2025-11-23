@@ -16,6 +16,7 @@ namespace Locadora.Models
         public readonly static string SELECTCATEGORIAPORNOME = @"SELECT * 
                                                                FROM tblCategorias 
                                                                WHERE CategoriaID = @CategoriaID";
+
         public readonly static string SELECTNOMECATEGORIAPORID = @"SELECT Nome
                                                                FROM tblCategorias 
                                                                WHERE CategoriaID = @CategoriaID";
@@ -25,11 +26,12 @@ namespace Locadora.Models
         public static readonly string UPDATECATEGORIA = @"UPDATE tblCategorias SET Descricao = @Descricao WHERE CategoriaID = @CategoriaID";
 
 
-        public int CategoriaID { get; set; }
-        public string Nome { get; set; }
-        public string? Descricao { get; set; }
-        public decimal Diaria { get; set; }
+        public int CategoriaID { get; private set; }
+        public string Nome { get; private set; }
+        public string? Descricao { get; private set; }
+        public decimal Diaria { get; private set; }
 
+        public List<Veiculo> Veiculos { get; set; } = new List<Veiculo>();
 
         public Categoria(string nome, decimal diaria)
         {

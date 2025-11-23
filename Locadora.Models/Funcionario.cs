@@ -22,11 +22,13 @@ namespace Locadora.Models
 
         public static readonly string UPDATESALARIOFUNCIONARIO = @"UPDATE tblFuncionarios SET Salario = @Salario WHERE FuncionarioID = @FuncionarioID";
 
+
         public int FuncionarioID { get; private set; }
         public string Nome { get; private set; }
         public string CPF { get; private set; }
         public string Email { get; private set; }
         public decimal Salario { get; private set; }
+        public List<Locacao> LocacoesGerenciadas { get; set; } = new List<Locacao>();
         public Funcionario(string nome, string cPF, string email)
         {
             Nome = nome;

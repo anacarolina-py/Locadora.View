@@ -10,8 +10,8 @@ namespace Locadora.Models.Enums
     { 
         Disponivel,
         Alugado,
-        Manutencao, 
-        Reservado
+        Manutencao
+       
        
     }
 }

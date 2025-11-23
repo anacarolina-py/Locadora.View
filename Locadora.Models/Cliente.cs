@@ -35,6 +35,13 @@ namespace Locadora.Models
 
                                                             WHERE c.Email = @Email";
 
+        public readonly static string SELECTCLIENTEPORID = "SELECT c.ClienteID, c.Nome, c.Email, c.Telefone, " +
+                                                          "d.TipoDocumento, d.Numero, d.DataEmissao, d.DataValidade " +
+                                                          "FROM tblClientes c " +
+                                                          "JOIN tblDocumentos d " +
+                                                          "ON c.ClienteID = d.ClienteID " +
+                                                           "WHERE c.ClienteID = @ClienteID";
+
         public readonly static string DELETECLIENTE = "DELETE FROM tblClientes WHERE ClienteID = @ClienteID";
 
         public int ClienteID { get; private set; }
@@ -52,6 +59,10 @@ namespace Locadora.Models
         public Cliente(string nome, string email, string? telefone) : this(nome, email)
         {
             Telefone = telefone;
+        }
+
+        public Cliente()
+        {
         }
 
         public void SetClienteID(int clienteID)

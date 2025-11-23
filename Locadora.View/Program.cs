@@ -21,19 +21,32 @@ var funcionarioController = new FuncionarioController();
 var locacaoController = new LocacaoController();
 
 
-var locacao = new Locacao(1019, 2002, 100.00m, 10 );
-locacaoController.AdicionarLocacao(locacao);
-Console.WriteLine("Locação adicionada com sucesso"+ locacao);
+var funcionarios = new List<int>();
+
+var locacao = new Locacao(2, 5, 100.00m, 10);
+locacaoController.AdicionarLocacao(locacao, funcionarios);
+Console.WriteLine("Locação adicionada com sucesso" + locacao);
+
+
+//var locacoes = locacaoController.ListarLocacoes();
+
+//foreach (var locacao in locacoes)
+//{
+//    Console.WriteLine(locacao);
+//    Console.WriteLine("-----------------------------");
+//}
+
+//var veiculo = veiculoController.BuscarVeiculoId(1);
+//Console.WriteLine(veiculo);
 
 
 
+//var locacoes = locacaoController.ListarLocacaoPorFuncionario(1);
 
-
-
-
-
-
-
+//foreach (var locacao in locacoes)
+//{
+//    Console.WriteLine(locacao);
+//}
 
 
 

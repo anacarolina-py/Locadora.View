@@ -156,6 +156,53 @@ namespace Locadora.Controller
             }
         }
 
+        public Cliente BuscaClientePorId(int id)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+
+            connection.Open();
+
+            using (connection)
+            {
+                try
+                {
+                    SqlCommand command = new SqlCommand(Cliente.SELECTCLIENTEPORID, connection);
+                    command.Parameters.AddWithValue("@ClienteID", id);
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        var cliente = new Cliente(
+                            reader["Nome"].ToString(),
+                            reader["Email"].ToString(),
+                            reader["Telefone"] != DBNull.Value ? reader["Telefone"].ToString() : null
+                        );
+                        cliente.SetClienteID(Convert.ToInt32(reader["ClienteID"]));
+
+                        var documento = new Documento(
+                            reader["TipoDocumento"].ToString(),
+                            reader["Numero"].ToString(),
+                            DateOnly.FromDateTime(reader.GetDateTime(6)),
+                            DateOnly.FromDateTime(reader.GetDateTime(7))
+                        );
+
+                        cliente.SetDocumento(documento);
+                        return cliente;
+                    }
+                    return null;
+                }
+                catch (SqlException ex)
+                {
+                    throw new Exception("Erro ao buscar cliente por email: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Erro inesperado ao buscar cliente por email: " + ex.Message);
+                }
+
+            }
+
+
+        }
         public void AtualizarTelefoneCliente(string telefone, string email)
         {
             var clienteEncontrado = this.BuscarClientePorEmail(email);
@@ -229,7 +276,6 @@ namespace Locadora.Controller
                 }
             }
         }
-        
         
         public void DeletarCliente(string email)
         {
