@@ -1,4 +1,5 @@
-﻿using Locadora.Models;
+﻿using Locadora.Controller.Interfaces;
+using Locadora.Models;
 using Locadora.Models.Enums;
 using Microsoft.Data.SqlClient;
 using System;
@@ -13,13 +14,14 @@ namespace Locadora.Controller.Menus
         private VeiculoController controllerVeiculo = new VeiculoController();
         private ClienteController clienteController = new ClienteController();
         private FuncionarioController funcionarioController = new FuncionarioController();
+        private LocacaoFuncionarioController locacaoFuncionariosController = new LocacaoFuncionarioController();
 
         private void InsertService()
         {
             Cliente cliente = null;
             Veiculo veiculo = null;
 
-            //buscar cliente
+            // Buscar cliente
             string? email = Validar.ValidarInputString("Digite o email do cliente: ");
             if (email == null) return;
 
@@ -33,9 +35,7 @@ namespace Locadora.Controller.Menus
             Console.WriteLine("\n=-=-=   >  Cliente Encontrado  <   =-=-=\n");
             Console.WriteLine(cliente + "\n");
 
-            // buscar veículo
-
-
+            // Buscar veículo
             string? placa = Validar.ValidarInputString("Digite a placa do veículo: ");
             if (placa == null) return;
 
@@ -52,12 +52,47 @@ namespace Locadora.Controller.Menus
                 return;
             }
 
-
-
             Console.WriteLine("\n=-=-=   >  Veículo <   =-=-=\n");
             Console.WriteLine(veiculo + "\n");
 
-            // Selecionar funcionários
+            int diarias = Validar.ValidarInputInt("Informe o número de diárias: ");
+            if (diarias <= 0) return;
+
+            if (veiculo.Categoria == null)
+            {
+                Console.WriteLine("Erro: categoria do veículo não encontrada.");
+                return;
+            }
+
+            // garantir datas dentro do intervalo do SQL Server
+            DateTime dataLocacao = DateTime.Now;
+            DateTime dataDevolucaoPrevista = dataLocacao.AddDays(diarias);
+            if (dataDevolucaoPrevista > (DateTime)System.Data.SqlTypes.SqlDateTime.MaxValue)
+                dataDevolucaoPrevista = (DateTime)System.Data.SqlTypes.SqlDateTime.MaxValue;
+
+            // criar locação 
+            var locacao = new Locacao(
+                cliente.ClienteID,
+                veiculo.VeiculoID,
+                dataLocacao,
+                dataDevolucaoPrevista,
+                veiculo.Categoria.Diaria,
+                EStatusLocacao.Ativa.ToString()
+            );
+
+            try
+            {
+                // adicionar locação ao banco primeiro
+                controllerLocacao.AdicionarLocacao(locacao, null);
+                Console.WriteLine("\n>>> Locação realizada com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro ao criar locação: " + ex.Message);
+                return;
+            }
+
+            // Selecionar e associar funcionários
             Console.WriteLine("\n=-=-= Seleção de Funcionários =-=-=\n");
 
             var funcionarios = funcionarioController.ListarTodosFuncionarios();
@@ -85,7 +120,16 @@ namespace Locadora.Controller.Menus
                     continue;
                 }
 
-                funcionariosEscolhidos.Add(funcId);
+                try
+                {
+                    locacaoFuncionariosController.AssociarFuncionario(locacao.LocacaoID, funcId);
+                    funcionariosEscolhidos.Add(funcId);
+                    Console.WriteLine($"Funcionário {funcId} associado com sucesso!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao associar funcionário: {ex.Message}");
+                }
             }
 
             if (funcionariosEscolhidos.Count == 0)
@@ -93,46 +137,7 @@ namespace Locadora.Controller.Menus
                 Console.WriteLine("\nÉ obrigatório vincular pelo menos 1 funcionário.");
                 return;
             }
-
-            int diarias = Validar.ValidarInputInt("Informe o número de diárias: ");
-            if (diarias <= 0) return;
-
-            if (veiculo.Categoria == null)
-            {
-                Console.WriteLine("Erro: categoria do veículo não encontrada.");
-                return;
-            }
-
-            // Garantir que as datas estão dentro do intervalo permitido pelo SQL Server
-            DateTime dataLocacao = DateTime.Now;
-            if (dataLocacao < (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue)
-                dataLocacao = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
-
-            DateTime dataDevolucaoPrevista = dataLocacao.AddDays(diarias);
-            if (dataDevolucaoPrevista > (DateTime)System.Data.SqlTypes.SqlDateTime.MaxValue)
-                dataDevolucaoPrevista = (DateTime)System.Data.SqlTypes.SqlDateTime.MaxValue;
-
-            // Criar locação
-            var locacao = new Locacao(
-                cliente.ClienteID,
-                veiculo.VeiculoID,
-                dataLocacao,
-                dataDevolucaoPrevista,
-                veiculo.Categoria.Diaria,
-                EStatusLocacao.Ativa.ToString()
-            );
-
-            try
-            {
-                controllerLocacao.AdicionarLocacao(locacao, funcionariosEscolhidos);
-                Console.WriteLine("\n >>> Locação realizada com sucesso!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
         }
-
 
 
         private void SelectAllService()
