@@ -49,7 +49,7 @@ namespace Locadora.Models
         public string Email { get; private set; }
         public string? Telefone { get; private set; } = String.Empty;
         
-        public Documento Documento { get; private set; }
+        public Documento Documento { get; set; }
         public Cliente(string nome, string email)
         {
             Nome = nome;
@@ -72,7 +72,7 @@ namespace Locadora.Models
       
         public void SetDocumento(Documento documento)
         {
-            Documento = documento;
+            this.Documento = documento;
         }
         public void SetTelefone(string telefone)
         {
@@ -80,9 +80,12 @@ namespace Locadora.Models
         }
         public override string ToString()
         {
-            return $"Nome: {Nome} \nEmail: {Email} \nTelefone: {Telefone}\n" +
-                $"\nDocumento: {Documento.ToString()}"
-                ;
+            string telefoneStr = string.IsNullOrEmpty(Telefone) ? "Sem telefone" : Telefone;
+            string documentoStr = this.Documento != null ? Documento.ToString() : "Documento não cadastrado";
+
+            return $"Nome: {Nome} \nEmail: {Email} \nTelefone: {telefoneStr}\n" +
+                   $"\nDocumento: {documentoStr}\n--------------------------------------------\n";
         }
+
     }
 }

@@ -32,7 +32,7 @@
             ClienteID = clienteID;
         }
 
-
+       
         public override string ToString()
         {
             return $"Tipo: {TipoDocumento} \nNúmero: {Numero} \nData Emissão: {DataEmissao} \nData Validade: {DataValidade}\n";

@@ -1,4 +1,5 @@
 ﻿using Locadora.Models;
+using Locadora.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

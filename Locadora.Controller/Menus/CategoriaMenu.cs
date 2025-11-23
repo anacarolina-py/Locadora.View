@@ -108,12 +108,12 @@ namespace Utils.Menus
                 Console.WriteLine("\n\n                        =-=-=   >  Categoria  <   =-=-=\n");
                 Console.WriteLine(vlr);
 
-                string? description = Validar.ValidarInputString("\n > Informe a nova descrição ");
-                if (description is null) return;
+                decimal daily = Validar.ValidarInputDecimal("\n > Informe o novo Valor da Diária: R$ ");
+                if (daily == 0) return;
 
-                Controller.AtualizarDescricaoCategoria(name, description);
+                Controller.AtualizarDiariaCategoria(daily, name);
 
-                Console.WriteLine("\n >>>  Descrição atualizada com sucesso!");
+                Console.WriteLine("\n >>>  Valor atualizado com sucesso!");
 
             }
             catch (Exception ex)
@@ -121,6 +121,7 @@ namespace Utils.Menus
                 Console.WriteLine(ex.Message);
             }
         }
+
 
 
         private void DeleteService()
@@ -171,13 +172,16 @@ namespace Utils.Menus
             do
             {
                 Console.Clear();
-                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
-                Console.WriteLine(" |                  >      Categoria      <                 |");
-                Console.WriteLine(" |----------------------------------------------------------|");
-                Console.WriteLine(" | [ 1 ] Cadastrar Categoria   |   [ 2 ] Exibir Categorias  |");
-                Console.WriteLine(" | [ 3 ] Atualizar Descrição   |   [ 4 ] Atualizar Diária   |");
-                Console.WriteLine(" | [ 5 ] Deletar Categoria     |   [ 6 ] Voltar             |");
-                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-|");
+                Console.WriteLine(" |                 CATEGORIAS             |");
+                Console.WriteLine(" |----------------------------------------|");
+                Console.WriteLine(" | [ 1 ] Cadastrar Categoria              |");
+                Console.WriteLine(" | [ 2 ] Exibir Categoria                 |");
+                Console.WriteLine(" | [ 3 ] Atualizar Descrição              |");
+                Console.WriteLine(" | [ 4 ] Atualizar Diária                 |");
+                Console.WriteLine(" | [ 5 ] Deletar Categoria                |");
+                Console.WriteLine(" | [ 6 ] Voltar                           |");
+                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-|");
                 Console.WriteLine();
                 Console.Write("  >>> Informe o menu desejado: ");
                 string entrada = Console.ReadLine()!;

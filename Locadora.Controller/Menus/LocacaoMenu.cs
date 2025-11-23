@@ -1,5 +1,6 @@
 ﻿using Locadora.Models;
 using Locadora.Models.Enums;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using Utils.Validadacoes;
@@ -33,6 +34,8 @@ namespace Locadora.Controller.Menus
             Console.WriteLine(cliente + "\n");
 
             // buscar veículo
+
+
             string? placa = Validar.ValidarInputString("Digite a placa do veículo: ");
             if (placa == null) return;
 
@@ -43,11 +46,13 @@ namespace Locadora.Controller.Menus
                 return;
             }
 
-            if (veiculo.StatusVeiculo != EStatusVeiculo.Disponivel.ToString())
+            if (!veiculo.StatusVeiculo.Trim().Equals("Disponível", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine($"Veículo '{veiculo.Placa}' não está disponível.");
                 return;
             }
+
+
 
             Console.WriteLine("\n=-=-=   >  Veículo <   =-=-=\n");
             Console.WriteLine(veiculo + "\n");
@@ -89,24 +94,37 @@ namespace Locadora.Controller.Menus
                 return;
             }
 
-            // Informações de locação
             int diarias = Validar.ValidarInputInt("Informe o número de diárias: ");
             if (diarias <= 0) return;
 
-    
+            if (veiculo.Categoria == null)
+            {
+                Console.WriteLine("Erro: categoria do veículo não encontrada.");
+                return;
+            }
+
+            // Garantir que as datas estão dentro do intervalo permitido pelo SQL Server
+            DateTime dataLocacao = DateTime.Now;
+            if (dataLocacao < (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue)
+                dataLocacao = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+
+            DateTime dataDevolucaoPrevista = dataLocacao.AddDays(diarias);
+            if (dataDevolucaoPrevista > (DateTime)System.Data.SqlTypes.SqlDateTime.MaxValue)
+                dataDevolucaoPrevista = (DateTime)System.Data.SqlTypes.SqlDateTime.MaxValue;
+
+            // Criar locação
             var locacao = new Locacao(
                 cliente.ClienteID,
                 veiculo.VeiculoID,
-                DateTime.Now,
-                DateTime.Now.AddDays(diarias),
+                dataLocacao,
+                dataDevolucaoPrevista,
                 veiculo.Categoria.Diaria,
-                "Ativa"
+                EStatusLocacao.Ativa.ToString()
             );
 
             try
             {
                 controllerLocacao.AdicionarLocacao(locacao, funcionariosEscolhidos);
-
                 Console.WriteLine("\n >>> Locação realizada com sucesso!");
             }
             catch (Exception ex)
@@ -114,6 +132,7 @@ namespace Locadora.Controller.Menus
                 Console.WriteLine(ex.Message);
             }
         }
+
 
 
         private void SelectAllService()

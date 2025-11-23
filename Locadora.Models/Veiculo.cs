@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Locadora.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -54,7 +55,7 @@ namespace Locadora.Models
         public string Marca { get; private set; }
         public string Modelo { get; private set; }
         public int Ano { get; private set; }
-        public string StatusVeiculo { get; private set; }
+        public string StatusVeiculo{ get; private set; }
 
         public string? NomeCategoria { get; private set; }
 

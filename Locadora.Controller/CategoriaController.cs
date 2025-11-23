@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -120,45 +121,77 @@ namespace Locadora.Controller
             }
         }
 
-        public Categoria BuscaCategoriaPorNome(string nome)
+        public Categoria? BuscaCategoriaPorNome(string nome)
         {
+            using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+
+            using var command = new SqlCommand(Categoria.SELECTCATEGORIAPORNOME, connection);
+            command.Parameters.AddWithValue("@Nome", nome);
+            
+
+            using var reader = command.ExecuteReader();
+
+            if (reader.Read())
+            {
+                var categoria = new Categoria(
+                    reader["Nome"].ToString() ?? string.Empty,
+                    reader["Diaria"] != DBNull.Value ? Convert.ToDecimal(reader["Diaria"]) : 0m,
+                    reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : string.Empty
+                );
+
+                categoria.setCategoriaId(reader["CategoriaID"] != DBNull.Value ? Convert.ToInt32(reader["CategoriaID"]) : 0);
+
+                return categoria;
+            }
+
+            return null; 
+        }
+
+        public void AtualizarDiariaCategoria(decimal diaria, string nome)
+        {
+            var categoriaEncontrado = this.BuscaCategoriaPorNome(nome);
+
+            if (categoriaEncontrado is null)
+                throw new Exception("Não existe categoria com esse nome cadastrado!");
+
+            categoriaEncontrado.SetDiaria(diaria);
+
             SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
 
             connection.Open();
 
-            using (connection)
+            using (SqlTransaction transaction = connection.BeginTransaction())
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(Categoria.SELECTCATEGORIAPORNOME, connection);
-                    command.Parameters.AddWithValue("@Nome", nome);
-                    SqlDataReader reader = command.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        var categoria = new Categoria(
-                           reader["Nome"].ToString(),
-                           reader.GetDecimal(reader.GetOrdinal("Diaria")),
-                           reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : null
-                        );
-                        categoria.setCategoriaId(Convert.ToInt32(reader["CategoriaID"]));
+                    SqlCommand command = new SqlCommand(Categoria.UPDATEDIARIACATEGORIA, connection, transaction);
+                    var p = command.Parameters.Add("@Diaria", SqlDbType.Decimal);
+                    p.Precision = 10;
+                    p.Scale = 2;
+                    p.Value = categoriaEncontrado.Diaria;
+                    command.Parameters.AddWithValue("@CategoriaId", categoriaEncontrado.CategoriaID);
 
+                    command.ExecuteNonQuery();
 
-                        return categoria;
-                    }
-                    return null;
+                    transaction.Commit();
                 }
                 catch (SqlException ex)
                 {
-                    throw new Exception("Erro ao buscar categoria por nome: " + ex.Message);
+                    transaction.Rollback();
+                    throw new Exception("Erro ao atualizar diaria da categoria: " + ex.Message);
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("Erro inesperado ao buscar categoria por nome: " + ex.Message);
+                    transaction.Rollback();
+                    throw new Exception("Erro inesperado ao atualizar diaria da categoria: " + ex.Message);
                 }
-
+                finally
+                {
+                    connection.Close();
+                }
             }
         }
-
         public void AtualizarDescricaoCategoria(string nome, string descricao)
         {
             Categoria categoriaEncontrada = BuscaCategoriaPorNome(nome);
@@ -199,6 +232,32 @@ namespace Locadora.Controller
                     connection.Close();
                 }
             }
+        }
+
+        public Categoria? BuscaCategoriaPorId(int id)
+        {
+            using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+
+            using var command = new SqlCommand(Categoria.SELECTCATEGORIAPORID, connection);
+            command.Parameters.AddWithValue("@CategoriaID", id);
+
+            using var reader = command.ExecuteReader();
+
+            if (reader.Read())
+            {
+                var categoria = new Categoria(
+                    reader["Nome"].ToString() ?? string.Empty,
+                    reader["Diaria"] != DBNull.Value ? Convert.ToDecimal(reader["Diaria"]) : 0m,
+                    reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : string.Empty
+                );
+
+                categoria.setCategoriaId(reader["CategoriaID"] != DBNull.Value ? Convert.ToInt32(reader["CategoriaID"]) : 0);
+
+                return categoria;
+            }
+
+            return null;
         }
 
 

@@ -231,8 +231,8 @@ do
 //{
 //    throw new Exception(ex.Message);
 //}
-//var veiculoEncontrado = veiculoController.BuscarVeiculoPorPlaca("MNO7890");
-
+//var veiculoEncontrado = veiculoController.BuscarVeiculoPorPlaca("XAQ7898");
+//Console.WriteLine(veiculoEncontrado);
 
 
 //var veiculo = veiculoController.BuscarVeiculoPorPlaca("XYZ-7474");
