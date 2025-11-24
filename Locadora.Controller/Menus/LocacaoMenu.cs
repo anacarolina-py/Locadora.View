@@ -150,6 +150,48 @@ namespace Locadora.Controller.Menus
             }
         }
 
+        public void SelectEmproyeRent()
+        {
+            Console.Clear();
+
+            try
+            {
+                var funcionarios = locacaoFuncionariosController.ListarFuncionariosComLocacoes();
+
+                if (funcionarios == null || funcionarios.Count == 0)
+                {
+                    Console.WriteLine("Nenhum funcionário encontrado.");
+                    return;
+                }
+
+                foreach (var funcionario in funcionarios)
+                {
+                    Console.WriteLine($"Funcionário: {funcionario.Nome} (ID: {funcionario.FuncionarioID})");
+
+                    if (funcionario.LocacoesGerenciadas == null || funcionario.LocacoesGerenciadas.Count == 0)
+                    {
+                        Console.WriteLine("   Sem locações associadas.");
+                    }
+                    else
+                    {
+                        foreach (var locacao in funcionario.LocacoesGerenciadas)
+                        {
+                            Console.WriteLine($"   Locação ID: {locacao.LocacaoID}");
+                            Console.WriteLine($"      Data Locação: {locacao.DataLocacao:dd/MM/yyyy}");
+                            Console.WriteLine($"      Data Devolução Prevista: {locacao.DataDevolucaoPrevista:dd/MM/yyyy}");
+                            Console.WriteLine($"      Status: {locacao.Status}");
+                            Console.WriteLine();
+                        }
+                    }
+
+                    Console.WriteLine("------------------------------");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro ao listar funcionários com locações: " + ex.Message);
+            }
+        }
 
         private void UpdateCancelLocacaoService()
         {
@@ -211,7 +253,6 @@ namespace Locadora.Controller.Menus
 
             try
             {
-                // Busca a locação pelo ID
                 var locacao = controllerLocacao.BuscarLocacaoPorId(id);
                 if (locacao is null)
                 {
@@ -229,20 +270,19 @@ namespace Locadora.Controller.Menus
                 Console.WriteLine("\n=-=-=   >  Locação  <   =-=-=\n");
                 Console.WriteLine(locacao + "\n");
 
-                // Atualiza dados da locação
-                locacao.SetStatus(EStatusLocacao.Finalizada.ToString());
+                // att data de devolução real
                 locacao.SetDataDevolucaoReal(DateTime.Now);
+                controllerLocacao.AtualizarDataDevolucaoRealLocacao(locacao, locacao.DataDevolucaoReal);
 
-                // Calcula o valor total da locação e atualiza o objeto
-                decimal valorTotal = locacao.CalcularValorFinal();
-                locacao.SetValorTotal(valorTotal);
+                // att status da locação
+                locacao.SetStatus(EStatusLocacao.Finalizada.ToString());
+                controllerLocacao.AtualizarStatusLocacao(locacao, locacao.Status);
 
-                // Atualiza no banco
-                controllerLocacao.AtualizarDataDevolucaoRealLocacao(locacao, DateTime.Now);
-                controllerLocacao.AtualizarStatusLocacao(locacao, EStatusLocacao.Finalizada.ToString());
+                // att calcula o valor total e salva no banco
+                decimal valorTotal = locacao.CalcularValorFinal();  // Atualiza locacao.ValorTotal
                 controllerLocacao.AtualizarValorTotalLocacao(locacao);
 
-                // Atualiza status do veículo para disponível
+                // att status do veículo para disponível
                 string placaVeiculo = controllerVeiculo.BuscarPlacaPorId(locacao.VeiculoID);
                 controllerVeiculo.AtualizarStatusVeiculo(EStatusVeiculo.Disponível.ToString(), placaVeiculo);
 
@@ -254,7 +294,6 @@ namespace Locadora.Controller.Menus
                 Console.WriteLine("Erro ao finalizar locação: " + ex.Message);
             }
         }
-
 
 
 
@@ -272,8 +311,9 @@ namespace Locadora.Controller.Menus
                 Console.WriteLine(" | [ 2 ] Listar Locações                  |");
                 Console.WriteLine(" | [ 3 ] Finalizar Locação                |");
                 Console.WriteLine(" | [ 4 ] Cancelar Locação                 |");
-                Console.WriteLine(" | [ 5 ] Voltar                           |");
-                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|");
+                Console.WriteLine(" | [ 5 ] Listar Locação e Funcionários    |");
+                Console.WriteLine(" | [ 6] Voltar                           |");
+                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
                 Console.WriteLine();
 
                 opcao = Validar.ValidarInputInt("Escolha uma opção: ");
@@ -286,7 +326,8 @@ namespace Locadora.Controller.Menus
                     case 2: SelectAllService(); break;
                     case 3: UpdateLocacaoService(); break;
                     case 4: UpdateCancelLocacaoService(); break;
-                    case 5: return;
+                    case 5: SelectEmproyeRent(); break;
+                    case 6: return;
                     default:
                         Console.WriteLine("Opção inválida!");
                         break;

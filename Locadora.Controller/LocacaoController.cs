@@ -82,7 +82,6 @@ namespace Locadora.Controller
             }
         }
 
-
         public void AtualizarValorTotalLocacao(Locacao locacao)
         {
             SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
@@ -207,8 +206,6 @@ namespace Locadora.Controller
             }
         }
 
-
-
         public Locacao BuscarLocacaoPorId(Guid id)
         {
 
@@ -282,8 +279,6 @@ namespace Locadora.Controller
             }
         }
 
-       
-
         public List<Locacao> ListarLocacaoPorCliente(int clienteId)
         {
             var locacoes = new List<Locacao>();
@@ -340,46 +335,7 @@ namespace Locadora.Controller
             return locacoes;
         }
 
-        public List<(Funcionario funcionario, Locacao locacao)> ListarFuncionariosComLocacoes()
-        {
-            var resultados = new List<(Funcionario, Locacao)>();
-
-            using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
-            connection.Open();
-
-            using var command = new SqlCommand(Locacao.SELECTALLLOCACOESFUNCIONARIOS, connection);
-            using var reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                var funcionario = new Funcionario(
-                    reader["Nome"] != DBNull.Value ? reader["Nome"].ToString() : string.Empty,
-                    reader["CPF"] != DBNull.Value ? reader["CPF"].ToString() : string.Empty,
-                    reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty,
-                    reader["Salario"] != DBNull.Value ? Convert.ToDecimal(reader["Salario"]) : 0m
-                );
-                funcionario.SetFuncionarioID(reader["FuncionarioID"] != DBNull.Value ? Convert.ToInt32(reader["FuncionarioID"]) : 0);
-
-                Locacao locacao = null;
-                if (reader["LocacaoID"] != DBNull.Value)
-                {
-                    locacao = new Locacao(
-                        reader["ClienteID"] != DBNull.Value ? Convert.ToInt32(reader["ClienteID"]) : 0,
-                        reader["VeiculoID"] != DBNull.Value ? Convert.ToInt32(reader["VeiculoID"]) : 0,
-                        reader["DataLocacao"] != DBNull.Value ? Convert.ToDateTime(reader["DataLocacao"]) : DateTime.MinValue,
-                        reader["DataDevolucaoPrevista"] != DBNull.Value ? Convert.ToDateTime(reader["DataDevolucaoPrevista"]) : DateTime.MinValue,
-                        reader["ValorDiaria"] != DBNull.Value ? Convert.ToDecimal(reader["ValorDiaria"]) : 0m,
-                        reader["Status"] != DBNull.Value ? reader["Status"].ToString() : string.Empty
-                    );
-
-                    locacao.SetLocacaoId(reader["LocacaoID"] != DBNull.Value ? (Guid)reader["LocacaoID"] : Guid.Empty);
-                }
-
-                resultados.Add((funcionario, locacao));
-            }
-
-            return resultados;
-        }
+       
 
 
     }

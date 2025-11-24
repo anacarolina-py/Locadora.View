@@ -79,7 +79,7 @@ namespace Locadora.Models
         }
         public override string ToString()
         {
-            return $"Placa: {Placa} \nModelo: {Modelo} \nAno: {Ano} \nStatus: {StatusVeiculo}\nCategoria: {NomeCategoria}\n";
+            return $"Placa: {Placa} \nModelo: {Modelo} \nAno: {Ano} \nStatus: {StatusVeiculo}\nCategoria: {Categoria.Nome}\n";
         }
 
         public void SetCategoria(Categoria categoria)

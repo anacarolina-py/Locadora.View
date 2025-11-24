@@ -18,30 +18,9 @@ namespace Locadora.Models
                                                           FROM tblLocacoes;";
        
 
-        public readonly static string SELECTLOCACAOPORID = @"
-    SELECT 
-        l.LocacaoID,
-        l.ClienteID,
-        l.VeiculoID,
-        l.DataLocacao,
-        l.DataDevolucaoPrevista,
-        l.DataDevolucaoReal,
-        l.ValorDiaria,
-        l.ValorTotal,
-        l.Multa,
-        l.Status,
-        (SELECT Placa FROM tblVeiculos v WHERE v.VeiculoID = l.VeiculoID) AS VeiculoPlaca
-    FROM tblLocacoes l
-    WHERE l.LocacaoID = @LocacaoID
-";
-
-
-
-        //public readonly static string SELECTLOCACAOPORID = @"SELECT LocacaoID, ClienteID, VeiculoID, DataLocacao, DataDevolucaoPrevista, DataDevolucaoReal, 
-        //                                                   ValorDiaria, ValorTotal, Multa, Status
-        //                                                   FROM tblLocacoes
-        //                                                   WHERE LocacaoID = @LocacaoID";
-
+        public readonly static string SELECTLOCACAOPORID = @"SELECT l.LocacaoID, l.ClienteID, l.VeiculoID, l.DataLocacao, l.DataDevolucaoPrevista, l.DataDevolucaoReal,
+                                                            l.ValorDiaria, l.ValorTotal, l.Multa, l.Status, (SELECT Placa FROM tblVeiculos v WHERE v.VeiculoID = l.VeiculoID) 
+                                                            AS VeiculoPlaca FROM tblLocacoes l WHERE l.LocacaoID = @LocacaoID";
 
         public readonly static string SELECTLOCACAOPORCLIENTE = "SELECT * FROM tblLocacoes WHERE ClienteID = @ClienteID";
 
@@ -64,7 +43,7 @@ namespace Locadora.Models
         public readonly static string UPDATELOCACAOSTATUS = @"UPDATE tblLocacoes SET Status = @Status 
                                                                 WHERE LocacaoID = @LocacaoID";
 
-        public readonly static string UPDATELOCACAOVALORTOTAL = "UPDATE tblLocacoes SET ValorTotal = @ValorTotal WHERE LocacaoID = LocacaoID";
+        public readonly static string UPDATELOCACAOVALORTOTAL = "UPDATE tblLocacoes SET ValorTotal = @ValorTotal WHERE LocacaoID = @LocacaoID";
 
         public Guid LocacaoID { get; private set; }
         public int ClienteID { get; private set; }
