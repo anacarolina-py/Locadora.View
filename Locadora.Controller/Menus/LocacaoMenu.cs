@@ -312,7 +312,7 @@ namespace Locadora.Controller.Menus
                 Console.WriteLine(" | [ 3 ] Finalizar Locação                |");
                 Console.WriteLine(" | [ 4 ] Cancelar Locação                 |");
                 Console.WriteLine(" | [ 5 ] Listar Locação e Funcionários    |");
-                Console.WriteLine(" | [ 6] Voltar                           |");
+                Console.WriteLine(" | [ 6 ] Voltar                            |");
                 Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
                 Console.WriteLine();
 

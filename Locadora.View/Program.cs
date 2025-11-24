@@ -18,13 +18,16 @@ int opcao = 0;
 do
 {
     Console.Clear();
-    Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
-    Console.WriteLine(" |       >    Sistema Locadora de Veículos    <       |");
-    Console.WriteLine(" |----------------------------------------------------|");
-    Console.WriteLine(" | [ 1 ] Locar Veículo      |  [ 2 ] Menu Veículo     |");
-    Console.WriteLine(" | [ 3 ] Menu Categoria     |  [ 4 ] Menu Funcionario |");
-    Console.WriteLine(" | [ 5 ] Menu Cliente       |  [ 6 ] Sair             |");
-    Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+    Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+    Console.WriteLine(" |     SISTEMA DE LOCADORA DE VEÍCULOS    |");
+    Console.WriteLine(" |----------------------------------------|");
+    Console.WriteLine(" | [ 1 ] Locar Veículo                    |");
+    Console.WriteLine(" | [ 2 ] Menu Veículo                     |");
+    Console.WriteLine(" | [ 3 ] Menu Categoria                   |");
+    Console.WriteLine(" | [ 4 ] Menu Funcionário                 |");
+    Console.WriteLine(" | [ 5 ] Menu Cliente                     |");
+    Console.WriteLine(" | [ 6 ] Voltar                           |");
+    Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
     Console.WriteLine();
     Console.Write("  >>> Informe o menu desejado: ");
     string entrada = Console.ReadLine()!;

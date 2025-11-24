@@ -160,13 +160,16 @@ namespace Utils.Menus
             do
             {
                 Console.Clear();
-                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
-                Console.WriteLine(" |                  >      Veículo      <                 |");
-                Console.WriteLine(" |--------------------------------------------------------|");
-                Console.WriteLine(" | [ 1 ] Cadastrar Veículo   |   [ 2 ] Exibir Veiculos    |");
-                Console.WriteLine(" | [ 3 ] Atualizar Stutus    |   [ 4 ] Exibir Categorias  |");
-                Console.WriteLine(" | [ 5 ] Deletar Veículo     |   [ 6 ] Voltar             |");
-                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+                Console.WriteLine(" |                 VEÍCULOS               |");
+                Console.WriteLine(" |----------------------------------------|");
+                Console.WriteLine(" | [ 1 ] Cadastrar Veículo                |");
+                Console.WriteLine(" | [ 2 ] Exibir Veículos                  |");
+                Console.WriteLine(" | [ 3 ] Atualizar Veículo                |");
+                Console.WriteLine(" | [ 4 ] Exibir CAtegorias                |");
+                Console.WriteLine(" | [ 5 ] Deletar Veículo                  |");
+                Console.WriteLine(" | [ 6 ] Voltar                            |");
+                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
                 Console.WriteLine();
                 Console.Write("  >>> Informe o menu desejado: ");
                 string entrada = Console.ReadLine()!;

@@ -140,13 +140,15 @@ namespace Utils.Menus
             do
             {
                 Console.Clear();
-                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
-                Console.WriteLine(" |                    >      Funcionario      <                 |");
-                Console.WriteLine(" |--------------------------------------------------------------|");
-                Console.WriteLine(" | [ 1 ] Cadastrar Funcionario   |   [ 2 ] Exibir Funcionario   |");
-                Console.WriteLine(" | [ 3 ] Atualizar Salario       |   [ 4 ] Deletar Funcionario  |");
-                Console.WriteLine(" | [ 5 ] Voltar                  |                              |");
-                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+                Console.WriteLine(" |               FUNCIONÁRIOS             |");
+                Console.WriteLine(" |----------------------------------------|");
+                Console.WriteLine(" | [ 1 ] Cadastrar Funcionário            |");
+                Console.WriteLine(" | [ 2 ] Exibir Funcionário               |");
+                Console.WriteLine(" | [ 3 ] Atualizar Salário                |");
+                Console.WriteLine(" | [ 4 ] Deletar Funcionário              |");
+                Console.WriteLine(" | [ 5 ] Voltar                           |");              
+                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
                 Console.WriteLine();
                 Console.Write("  >>> Informe o menu desejado: ");
                 string entrada = Console.ReadLine()!;

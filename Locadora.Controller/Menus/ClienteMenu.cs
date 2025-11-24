@@ -194,13 +194,16 @@ namespace Utils.Menus
             do
             {
                 Console.Clear();
-                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|");
-                Console.WriteLine(" |                   >      Cliente      <                   |");
-                Console.WriteLine(" |-----------------------------------------------------------|");
-                Console.WriteLine(" | [ 1 ] Cadastrar Cliente    |   [ 2 ] Exibir Clientes      |");
-                Console.WriteLine(" | [ 3 ] Atualizar Telefone   |   [ 4 ] Atualizar Documento  |");
-                Console.WriteLine(" | [ 5 ] Deletar Cliente      |   [ 6 ] Voltar               |");
-                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|");
+                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+                Console.WriteLine(" |                 CLIENTES               |");
+                Console.WriteLine(" |----------------------------------------|");
+                Console.WriteLine(" | [ 1 ] Cadastrar Cliente                |");
+                Console.WriteLine(" | [ 2 ] Exibir Clientes                  |");
+                Console.WriteLine(" | [ 3 ] Atualizar Telefone               |");
+                Console.WriteLine(" | [ 4 ] Atualizar Documento              |");
+                Console.WriteLine(" | [ 5 ] Deletar Cliente                  |");
+                Console.WriteLine(" | [ 6 ] Voltar                           |");
+                Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
                 Console.WriteLine();
                 Console.Write("  >>> Informe o menu desejado: ");
                 string entrada = Console.ReadLine()!;

@@ -57,7 +57,7 @@ namespace Locadora.Models
         public string Status { get; private set; }
         public Cliente Cliente { get; private set; } = new Cliente();
         public Veiculo Veiculo { get; private set; } = new Veiculo();
-        public List<Funcionario> FuncionariosEnvolvidos { get; set; } = new List<Funcionario>();
+        //public List<Funcionario> FuncionariosEnvolvidos { get; set; } = new List<Funcionario>(); -- não está sendo usada
         public Locacao(Cliente cliente, Veiculo veiculo, decimal valorDiaria, int diasLocacao, string status)
         {
             this.Cliente = cliente;
