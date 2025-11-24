@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -15,36 +16,69 @@ namespace Locadora.Controller
 {
     public class LocacaoController : ILocacaoController
     {
-        public void AdicionarLocacao(Locacao locacao, List<int> funcionarios)
+        public void AdicionarLocacao(Locacao locacao, List<int>? funcionarios)
         {
-            using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
-            connection.Open();
-
-            using var transaction = connection.BeginTransaction();
-            try
+            using (var connection = new SqlConnection(ConnectionDB.GetConnectionString()))
             {
-                // Inserir locação
-                Guid locacaoId;
-                using (var command = new SqlCommand(Locacao.INSERTLOCACAO, connection, transaction))
+                connection.Open();
+                using (SqlTransaction transaction = connection.BeginTransaction())
                 {
-                    command.Parameters.AddWithValue("@ClienteID", locacao.ClienteID);
-                    command.Parameters.AddWithValue("@VeiculoID", locacao.VeiculoID);
-                    command.Parameters.AddWithValue("@DataLocacao", locacao.DataLocacao);
-                    command.Parameters.AddWithValue("@DataDevolucaoPrevista", locacao.DataDevolucaoPrevista);
-                    command.Parameters.AddWithValue("@ValorDiaria", locacao.ValorDiaria);
-                    command.Parameters.AddWithValue("@ValorTotal", locacao.ValorTotal);
-                    command.Parameters.AddWithValue("@Multa", 0m);
-                    command.Parameters.AddWithValue("@Status", locacao.Status);
-                    locacaoId = command.ExecuteScalar() as Guid? ?? Guid.Empty;
-                }
+                    try
+                    {
+                        // 1️⃣ Inserir locação e obter o ID gerado
+                        using (var command = new SqlCommand(Locacao.INSERTLOCACAO, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@ClienteID", locacao.ClienteID);
+                            command.Parameters.AddWithValue("@VeiculoID", locacao.VeiculoID);
+                            command.Parameters.AddWithValue("@DataLocacao", locacao.DataLocacao);
+                            command.Parameters.AddWithValue("@DataDevolucaoPrevista", locacao.DataDevolucaoPrevista);
+                            command.Parameters.AddWithValue("@ValorDiaria", locacao.ValorDiaria);
+                            command.Parameters.AddWithValue("@ValorTotal", locacao.ValorTotal);
+                            command.Parameters.AddWithValue("@Multa", locacao.Multa);
+                            command.Parameters.AddWithValue("@Status", locacao.Status.ToString());
 
-       
-                transaction.Commit();
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                throw new Exception("Erro ao adicionar locação: " + ex.Message);
+                            // Executa e retorna o ID gerado
+                            locacao.SetLocacaoId((Guid)command.ExecuteScalar());
+                        }
+
+                        // 2️⃣ Associar funcionários (se houver)
+                        if (funcionarios != null && funcionarios.Count > 0)
+                        {
+                            foreach (var funcId in funcionarios)
+                            {
+                                using (var cmdAssoc = new SqlCommand(LocacaoFuncionario.ASSOCIARFUNCIONARIO, connection, transaction))
+                                {
+                                    cmdAssoc.Parameters.AddWithValue("@LocacaoID", locacao.LocacaoID);
+                                    cmdAssoc.Parameters.AddWithValue("@FuncionarioID", funcId);
+                                    cmdAssoc.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        // 3️⃣ Atualizar status do veículo para "Alugado" usando a placa
+                        VeiculoController controllerVeiculo = new VeiculoController();
+                        string placaVeiculo = controllerVeiculo.BuscarPlacaPorId(locacao.VeiculoID);
+
+                        using (var commandVeiculo = new SqlCommand(Veiculo.UPDATESTATUSVEICULO, connection, transaction))
+                        {
+                            commandVeiculo.Parameters.AddWithValue("@StatusVeiculo", "Alugado");
+                            commandVeiculo.Parameters.AddWithValue("@Placa", placaVeiculo);
+                            commandVeiculo.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch (SqlException ex)
+                    {
+                        transaction.Rollback();
+                        throw new Exception("Erro de banco ao adicionar locação: " + ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw new Exception("Erro ao adicionar locação: " + ex.Message);
+                    }
+                }
             }
         }
 
@@ -117,7 +151,7 @@ namespace Locadora.Controller
                                 reader.GetDecimal(6),
                                 reader.GetDecimal(7),
                                 reader.GetDecimal(8),
-                                status
+                                statusStr
                             );
 
                             locacoes.Add(locacao);
@@ -141,40 +175,39 @@ namespace Locadora.Controller
             }
         }
 
-
-        public void AtualizarDataDevolucaoRealLocacao(Guid id, DateTime devolucao)
+        public void AtualizarDataDevolucaoRealLocacao(Locacao locacao, DateTime? dataDevolucao)
         {
-            var locacaoEncontrada = BuscarLocacaoPorId(id);
-            if (locacaoEncontrada is null)
+            using (SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString()))
             {
-                throw new Exception("Locação não encontrada!");
-            }
+                connection.Open();
+                using (SqlTransaction transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        SqlCommand command = new SqlCommand(Locacao.UPDATELOCACAODEVOLUCAOREAL, connection, transaction);
 
-            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+                        
+                        command.Parameters.AddWithValue("@DataDevolucaoReal", (object?)dataDevolucao ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@LocacaoID", locacao.LocacaoID);
 
-            connection.Open();
-            using (SqlTransaction transaction = connection.BeginTransaction())
-            {
-                try
-                {
-                    SqlCommand command = new SqlCommand(Locacao.UPDATELOCACAODEVOLUCAOREAL, connection, transaction);
-                    command.Parameters.AddWithValue("@DataDevolucaoReal", devolucao);
-                    command.Parameters.AddWithValue("@LocacaoID", id);
-                    command.ExecuteNonQuery();
-                    transaction.Commit();
-                }
-                catch (SqlException ex)
-                {
-                    transaction.Rollback();
-                    throw new Exception("Erro ao atualizar a data de devolução do veículo: " + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw new Exception("Erro ao atualizar a data de devolução do veículo: " + ex.Message);
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    catch (SqlException ex)
+                    {
+                        transaction.Rollback();
+                        throw new Exception("Erro ao atualizar a data de devolução da locação: " + ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw new Exception("Erro ao atualizar a data de devolução da locação: " + ex.Message);
+                    }
                 }
             }
         }
+
+
 
         public Locacao BuscarLocacaoPorId(Guid id)
         {
@@ -202,6 +235,7 @@ namespace Locadora.Controller
                                     Convert.ToDecimal(reader["ValorDiaria"]),
                                     reader["Status"].ToString()
                                     );
+                            locacao.SetLocacaoId((Guid)reader["LocacaoID"]);
 
                             return locacao;
                         }
@@ -219,13 +253,8 @@ namespace Locadora.Controller
                 }
             }
         }
-        public void AtualizarStatusLocacao(Guid id, string status)
+        public void AtualizarStatusLocacao(Locacao locacao, string status)
         {
-            var locacaoEncontrada = BuscarLocacaoPorId(id);
-            if (locacaoEncontrada is null)
-            {
-                throw new Exception("Locação não encontrada!");
-            }
 
             SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
 
@@ -236,7 +265,7 @@ namespace Locadora.Controller
                 {
                     SqlCommand command = new SqlCommand(Locacao.UPDATELOCACAOSTATUS, connection, transaction);
                     command.Parameters.AddWithValue("@Status", status);
-                    command.Parameters.AddWithValue("@LocacaoID", id);
+                    command.Parameters.AddWithValue("@LocacaoID", locacao.LocacaoID);
                     command.ExecuteNonQuery();
                     transaction.Commit();
                 }
@@ -252,6 +281,8 @@ namespace Locadora.Controller
                 }
             }
         }
+
+       
 
         public List<Locacao> ListarLocacaoPorCliente(int clienteId)
         {
@@ -280,7 +311,6 @@ namespace Locadora.Controller
 
             return locacoes;
         }
-
 
         public List<Locacao> ListarLocacaoPorFuncionario(int funcionarioID)
         {

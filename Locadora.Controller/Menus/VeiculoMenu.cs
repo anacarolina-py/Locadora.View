@@ -38,7 +38,7 @@ namespace Utils.Menus
             int year = Validar.ValidarInputInt("Ano do Veículo: ");
             if (year == 0) return;
 
-            Veiculo vehicle = new Veiculo(category.CategoriaID, plate, mark, model, year, EStatusVeiculo.Disponivel.ToString());
+            Veiculo vehicle = new Veiculo(category.CategoriaID, plate, mark, model, year, EStatusVeiculo.Disponível.ToString());
 
             try
             {
@@ -94,7 +94,7 @@ namespace Utils.Menus
                 if (vehicleStatus == 0 || vehicleStatus is not 1 && vehicleStatus is not 2 && vehicleStatus is not 3) return;
 
                 if (vehicleStatus == 1)
-                    Controller.AtualizarStatusVeiculo(EStatusVeiculo.Disponivel.ToString(), plate);
+                    Controller.AtualizarStatusVeiculo(EStatusVeiculo.Disponível.ToString(), plate);
                 else if (vehicleStatus == 2)
                     Controller.AtualizarStatusVeiculo(EStatusVeiculo.Alugado.ToString(), plate);
                 else if (vehicleStatus == 3)

@@ -10,6 +10,7 @@ namespace Locadora.Models
     {
         public static readonly string ASSOCIARFUNCIONARIO = @"INSERT INTO tblLocacaoFuncionarios (LocacaoID, FuncionarioID) 
                                                               VALUES (@LocacaoID, @FuncionarioID)";
+
         public static readonly string DESASSOCIARFUNCIONARIO = @"DELETE FROM tblLocacaoFuncionarios WHERE LocacaoID = @LocacaoID
                                                              AND FuncionarioID = @FuncionarioID";
         public int LocacaoFuncionarioID { get; set; }

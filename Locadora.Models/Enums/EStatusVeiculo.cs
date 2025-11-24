@@ -8,7 +8,7 @@ namespace Locadora.Models.Enums
 {
     public enum EStatusVeiculo
     { 
-        Disponivel,
+        Disponível,
         Alugado,
         Manutencao
        

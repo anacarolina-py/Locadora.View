@@ -46,7 +46,7 @@ namespace Locadora.Controller.Menus
                 return;
             }
 
-            if (!veiculo.StatusVeiculo.Trim().Equals("Disponível", StringComparison.OrdinalIgnoreCase))
+            if (!veiculo.StatusVeiculo.Equals("Disponível", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine($"Veículo '{veiculo.Placa}' não está disponível.");
                 return;
@@ -64,27 +64,22 @@ namespace Locadora.Controller.Menus
                 return;
             }
 
-            // garantir datas dentro do intervalo do SQL Server
             DateTime dataLocacao = DateTime.Now;
             DateTime dataDevolucaoPrevista = dataLocacao.AddDays(diarias);
-            if (dataDevolucaoPrevista > (DateTime)System.Data.SqlTypes.SqlDateTime.MaxValue)
-                dataDevolucaoPrevista = (DateTime)System.Data.SqlTypes.SqlDateTime.MaxValue;
 
-            // criar locação 
             var locacao = new Locacao(
                 cliente.ClienteID,
                 veiculo.VeiculoID,
                 dataLocacao,
                 dataDevolucaoPrevista,
                 veiculo.Categoria.Diaria,
-                EStatusLocacao.Ativa.ToString()
+                "Ativa"
             );
 
             try
             {
-                // adicionar locação ao banco primeiro
                 controllerLocacao.AdicionarLocacao(locacao, null);
-                Console.WriteLine("\n>>> Locação realizada com sucesso!");
+                Console.WriteLine("\n>>> Locação criada com sucesso!");
             }
             catch (Exception ex)
             {
@@ -92,20 +87,14 @@ namespace Locadora.Controller.Menus
                 return;
             }
 
-            // Selecionar e associar funcionários
+            // Selecionar funcionarios
             Console.WriteLine("\n=-=-= Seleção de Funcionários =-=-=\n");
 
             var funcionarios = funcionarioController.ListarTodosFuncionarios();
-            if (funcionarios.Count == 0)
-            {
-                Console.WriteLine("Nenhum funcionário encontrado!");
-                return;
-            }
-
             foreach (var f in funcionarios)
                 Console.WriteLine($"{f.FuncionarioID} - {f.Nome}");
 
-            List<int> funcionariosEscolhidos = new List<int>();
+            List<int> funcionariosEscolhidos = new();
 
             while (true)
             {
@@ -113,8 +102,7 @@ namespace Locadora.Controller.Menus
 
                 if (funcId == 0) break;
 
-                var existe = funcionarios.Exists(f => f.FuncionarioID == funcId);
-                if (!existe)
+                if (!funcionarios.Exists(f => f.FuncionarioID == funcId))
                 {
                     Console.WriteLine("Funcionário não encontrado!");
                     continue;
@@ -124,19 +112,21 @@ namespace Locadora.Controller.Menus
                 {
                     locacaoFuncionariosController.AssociarFuncionario(locacao.LocacaoID, funcId);
                     funcionariosEscolhidos.Add(funcId);
-                    Console.WriteLine($"Funcionário {funcId} associado com sucesso!");
+                    Console.WriteLine($"Funcionário {funcId} associado!");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Erro ao associar funcionário: {ex.Message}");
+                    Console.WriteLine("Erro ao associar funcionário: " + ex.Message);
                 }
             }
 
             if (funcionariosEscolhidos.Count == 0)
             {
-                Console.WriteLine("\nÉ obrigatório vincular pelo menos 1 funcionário.");
+                Console.WriteLine("\nÉ obrigatório selecionar ao menos 1 funcionário!");
                 return;
             }
+
+            Console.WriteLine("\n >>> Locação registrada com sucesso!");
         }
 
 
@@ -163,7 +153,7 @@ namespace Locadora.Controller.Menus
 
         private void UpdateCancelLocacaoService()
         {
-            Guid id = Validar.ValidarInputGuid("Informe o ID da locação: ");
+            Guid id = Validar.ValidarInputGuid("Informe o id para busca da locação: ");
             if (id == Guid.Empty) return;
 
             try
@@ -171,63 +161,101 @@ namespace Locadora.Controller.Menus
                 var locacao = controllerLocacao.BuscarLocacaoPorId(id);
                 if (locacao is null)
                 {
-                    Console.WriteLine("Não existe locação com esse ID!");
+                    Console.WriteLine("\nNão existe locação cadastrada com esse id!");
                     return;
                 }
 
-                if (locacao.Status != EStatusLocacao.Ativa)
+                if (locacao.Status != "Ativa")
                 {
-                    Console.WriteLine("Só é possível cancelar uma locação ativa.");
+                    Console.WriteLine($"\nStatus da locacao: {locacao.Status}");
+                    Console.WriteLine("\nSó é possível cancelar uma locação ativa. Operação cancelada!");
                     return;
                 }
 
-                controllerLocacao.AtualizarStatusLocacao(id, "Cancelada");
-                controllerLocacao.AtualizarDataDevolucaoRealLocacao(id, DateTime.Now);
+                if (locacao.DataLocacao.Date < DateTime.Now.Date)
+                {
+                    Console.WriteLine("\nNão é possível cancelar: essa locação já está ativa a mais de um dia. Por favor, finalize a locação.");
+                    return;
+                }
 
-                Console.WriteLine("\n >>> Locação cancelada com sucesso!");
+                Console.WriteLine("\n=-=-=   >  Locação  <   =-=-=\n");
+                Console.WriteLine(locacao + "\n");
 
+                // Atualiza locação
+                locacao.SetStatus(EStatusLocacao.Cancelada.ToString());
+                locacao.SetDataDevolucaoReal(null);
+                locacao.SetValorTotal(0m);
+
+                controllerLocacao.AtualizarDataDevolucaoRealLocacao(locacao, null);
+                controllerLocacao.AtualizarStatusLocacao(locacao, EStatusLocacao.Cancelada.ToString());
+                controllerLocacao.AtualizarValorTotalLocacao(locacao);
+
+                // Busca a placa do veículo diretamente pelo VeiculoID
+                string placaVeiculo = controllerVeiculo.BuscarPlacaPorId(locacao.VeiculoID);
+                controllerVeiculo.AtualizarStatusVeiculo(EStatusVeiculo.Disponível.ToString(), placaVeiculo);
+
+                Console.WriteLine($"Valor total da locação: R$ 0");
+                Console.WriteLine("\n >>>  Locacao cancelada com sucesso!\n");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Erro ao cancelar locação: " + ex.Message);
             }
         }
 
 
         private void UpdateLocacaoService()
         {
-            Guid id = Validar.ValidarInputGuid("Informe o ID da locação: ");
+            Guid id = Validar.ValidarInputGuid("Informe o id para busca da locação: ");
             if (id == Guid.Empty) return;
 
             try
             {
+                // Busca a locação pelo ID
                 var locacao = controllerLocacao.BuscarLocacaoPorId(id);
                 if (locacao is null)
                 {
-                    Console.WriteLine("Não existe locação com esse ID!");
+                    Console.WriteLine("\nNão existe locação cadastrada com esse id!");
                     return;
                 }
 
-                if (locacao.Status != EStatusLocacao.Ativa)
+                if (locacao.Status != "Ativa")
                 {
-                    Console.WriteLine("Somente locações ativas podem ser finalizadas.");
+                    Console.WriteLine($"\nStatus da locacao: {locacao.Status}");
+                    Console.WriteLine("\nSó é possível finalizar uma locação ativa. Operação cancelada!");
                     return;
                 }
 
-                decimal valorFinal = locacao.CalcularValorFinal();
+                Console.WriteLine("\n=-=-=   >  Locação  <   =-=-=\n");
+                Console.WriteLine(locacao + "\n");
 
-                controllerLocacao.AtualizarStatusLocacao(id, "Finalizada");
-                controllerLocacao.AtualizarDataDevolucaoRealLocacao(id, DateTime.Now);
+                // Atualiza dados da locação
+                locacao.SetStatus(EStatusLocacao.Finalizada.ToString());
+                locacao.SetDataDevolucaoReal(DateTime.Now);
 
-                Console.WriteLine($"\nValor total: R$ {valorFinal}");
-                Console.WriteLine("\n >>> Locação finalizada com sucesso!\n");
+                // Calcula o valor total da locação e atualiza o objeto
+                decimal valorTotal = locacao.CalcularValorFinal();
+                locacao.SetValorTotal(valorTotal);
 
+                // Atualiza no banco
+                controllerLocacao.AtualizarDataDevolucaoRealLocacao(locacao, DateTime.Now);
+                controllerLocacao.AtualizarStatusLocacao(locacao, EStatusLocacao.Finalizada.ToString());
+                controllerLocacao.AtualizarValorTotalLocacao(locacao);
+
+                // Atualiza status do veículo para disponível
+                string placaVeiculo = controllerVeiculo.BuscarPlacaPorId(locacao.VeiculoID);
+                controllerVeiculo.AtualizarStatusVeiculo(EStatusVeiculo.Disponível.ToString(), placaVeiculo);
+
+                Console.WriteLine($"Valor total da locação: R$ {valorTotal}");
+                Console.WriteLine("\n >>>  Locação finalizada com sucesso!\n");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Erro ao finalizar locação: " + ex.Message);
             }
         }
+
+
 
 
         public void LocacaoMenu()

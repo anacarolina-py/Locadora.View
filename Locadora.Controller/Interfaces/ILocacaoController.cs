@@ -11,8 +11,8 @@ namespace Locadora.Controller.Interfaces
     {
         public void AdicionarLocacao(Locacao locacao, List<int> funcionarios);
         public List<Locacao> ListarLocacoes();
-        public void AtualizarDataDevolucaoRealLocacao(Guid id, DateTime devolucao);
-        public void AtualizarStatusLocacao(Guid id, string status);
+        public void AtualizarDataDevolucaoRealLocacao(Locacao locacao, DateTime? devolucao);
+        public void AtualizarStatusLocacao(Locacao locacao, string status);
         public Locacao BuscarLocacaoPorId(Guid id);
         public List<Locacao> ListarLocacaoPorCliente(int clienteID);
         public List<Locacao> ListarLocacaoPorFuncionario(int funcionarioID);

@@ -54,7 +54,7 @@ namespace Locadora.Controller
             try
             {
                 command.Parameters.AddWithValue("@StatusVeiculo", statusVeiculo);
-                command.Parameters.AddWithValue("@VeiculoID", veiculo.VeiculoID);
+                command.Parameters.AddWithValue("@Placa", placa);
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
@@ -94,7 +94,21 @@ namespace Locadora.Controller
 
             return veiculo ?? throw new Exception("Veículo não encontrado.");
         }
+        public string BuscarPlacaPorId(int veiculoID)
+        {
+            using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
 
+            ;
+            using var command = new SqlCommand(Veiculo.SELECTPLACAPORID, connection);
+            command.Parameters.AddWithValue("@VeiculoID", veiculoID);
+
+            var result = command.ExecuteScalar();
+            if (result == null)
+                throw new Exception($"Veículo com ID {veiculoID} não encontrado.");
+
+            return result.ToString();
+        }
         public Veiculo BuscarVeiculoId(int id)
         {
             Veiculo veiculo = null;

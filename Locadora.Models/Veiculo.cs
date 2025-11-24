@@ -22,6 +22,8 @@ namespace Locadora.Models
                                                     FROM tblVeiculos
                                                     WHERE Placa = @Placa";
 
+        public readonly static string SELECTPLACAPORID = @"SELECT Placa FROM tblVeiculos WHERE VeiculoID = @VeiculoID";
+
         public readonly static string SELECTVEICULOBYID = @"SELECT VeiculoID, CategoriaID, 
                                                            Placa, Marca, Modelo, Ano, StatusVeiculo
                                                            FROM tblVeiculos 
@@ -29,7 +31,7 @@ namespace Locadora.Models
 
         public readonly static string UPDATESTATUSVEICULO = @"UPDATE tblVeiculos 
                                                     SET StatusVeiculo = @StatusVeiculo
-                                                    WHERE VeiculoID = @VeiculoID";
+                                                    WHERE Placa = @Placa";
 
         public readonly static string DELETEVEICULO = @"DELETE FROM tblVeiculos
                                                         WHERE VeiculoID = @VeiculoID";
