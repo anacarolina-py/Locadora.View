@@ -21,7 +21,7 @@ Relatórios básicos
 Linguagem: C#
 
 Banco de dados: Sql Server
-Ferramentas/Frameworks: [coloque aqui]
+
 
 📝 Objetivo do Trabalho
 
