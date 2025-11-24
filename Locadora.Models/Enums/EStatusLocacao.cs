@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace Locadora.Models.Enums
 {
-    public enum EStatusVeiculo
-    { 
-        Disponível,
-        Alugado,
-        Manutencao
-       
-       
+    public enum EStatusLocacao
+    {
+        Ativa,
+        Finalizada,
+        Cancelada
     }
 }

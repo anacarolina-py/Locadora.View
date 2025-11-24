@@ -35,6 +35,13 @@ namespace Locadora.Models
 
                                                             WHERE c.Email = @Email";
 
+        public readonly static string SELECTCLIENTEPORID = "SELECT c.ClienteID, c.Nome, c.Email, c.Telefone, " +
+                                                          "d.TipoDocumento, d.Numero, d.DataEmissao, d.DataValidade " +
+                                                          "FROM tblClientes c " +
+                                                          "JOIN tblDocumentos d " +
+                                                          "ON c.ClienteID = d.ClienteID " +
+                                                           "WHERE c.ClienteID = @ClienteID";
+
         public readonly static string DELETECLIENTE = "DELETE FROM tblClientes WHERE ClienteID = @ClienteID";
 
         public int ClienteID { get; private set; }
@@ -42,7 +49,7 @@ namespace Locadora.Models
         public string Email { get; private set; }
         public string? Telefone { get; private set; } = String.Empty;
         
-        public Documento Documento { get; private set; }
+        public Documento Documento { get; set; }
         public Cliente(string nome, string email)
         {
             Nome = nome;
@@ -54,6 +61,10 @@ namespace Locadora.Models
             Telefone = telefone;
         }
 
+        public Cliente()
+        {
+        }
+
         public void SetClienteID(int clienteID)
         {
             ClienteID = clienteID;
@@ -61,7 +72,7 @@ namespace Locadora.Models
       
         public void SetDocumento(Documento documento)
         {
-            Documento = documento;
+            this.Documento = documento;
         }
         public void SetTelefone(string telefone)
         {
@@ -69,9 +80,12 @@ namespace Locadora.Models
         }
         public override string ToString()
         {
-            return $"Nome: {Nome} \nEmail: {Email} \nTelefone: {Telefone}\n" +
-                $"\nDocumento: {Documento.ToString()}"
-                ;
+            string telefoneStr = string.IsNullOrEmpty(Telefone) ? "Sem telefone" : Telefone;
+            string documentoStr = this.Documento != null ? Documento.ToString() : "Documento não cadastrado";
+
+            return $"Nome: {Nome} \nEmail: {Email} \nTelefone: {telefoneStr}\n" +
+                   $"\nDocumento: {documentoStr}\n--------------------------------------------\n";
         }
+
     }
 }

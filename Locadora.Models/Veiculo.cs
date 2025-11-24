@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Locadora.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,34 @@ namespace Locadora.Models
 {
     public class Veiculo
     {
+        public readonly static string INSERTVEICULO = @"INSERT INTO tblVeiculos (CategoriaID, Placa, Marca, Modelo, Ano, StatusVeiculo) 
+                                                        VALUES (@CategoriaID, @Placa, @Marca, @Modelo, @Ano, @StatusVeiculo)";
+
+            
+        public readonly static string SELECTALLVEICULOS = @"SELECT CategoriaID, 
+                                                    Placa, Marca, Modelo, Ano, StatusVeiculo
+                                                    FROM tblVeiculos";
+
+        public readonly static string SELECTVEICULOPELAPLACA = @"SELECT VeiculoID, CategoriaID, 
+                                                    Placa, Marca, Modelo, Ano, StatusVeiculo
+                                                    FROM tblVeiculos
+                                                    WHERE Placa = @Placa";
+
+        public readonly static string SELECTPLACAPORID = @"SELECT Placa FROM tblVeiculos WHERE VeiculoID = @VeiculoID";
+
+        public readonly static string SELECTVEICULOBYID = @"SELECT VeiculoID, CategoriaID, 
+                                                           Placa, Marca, Modelo, Ano, StatusVeiculo
+                                                           FROM tblVeiculos 
+                                                           WHERE VeiculoID = @VeiculoID";
+
+        public readonly static string UPDATESTATUSVEICULO = @"UPDATE tblVeiculos 
+                                                    SET StatusVeiculo = @StatusVeiculo
+                                                    WHERE Placa = @Placa";
+
+        public readonly static string DELETEVEICULO = @"DELETE FROM tblVeiculos
+                                                        WHERE VeiculoID = @VeiculoID";
+
+        public readonly static string CHECKVEICULO = @"SELECT StatusVeiculo FROM tblVeiculos WHERE VeiculoID = @VeiculoID";
         public Veiculo(int categoriaID, string placa, string marca, string modelo, int ano, string statusVeiculo)
         {
             CategoriaID = categoriaID;
@@ -18,14 +47,26 @@ namespace Locadora.Models
             StatusVeiculo = statusVeiculo;
         }
 
+        public Veiculo()
+        {
+        }
+
         public int VeiculoID {  get; private set; }
         public int CategoriaID {  get; private set; }
         public string Placa {  get; private set; }
         public string Marca { get; private set; }
         public string Modelo { get; private set; }
         public int Ano { get; private set; }
-        public string StatusVeiculo { get; private set; }
+        public string StatusVeiculo{ get; private set; }
 
+        public string? NomeCategoria { get; private set; }
+
+        public Categoria Categoria { get; set; }
+
+        public void SetNomeCategoria(string nomeCategoria)
+        {
+            NomeCategoria = nomeCategoria;
+        }
         public void SetVeiculoID(int veiculoID)
         {
             VeiculoID = veiculoID;
@@ -38,7 +79,12 @@ namespace Locadora.Models
         }
         public override string ToString()
         {
-            return $"Placa: {Placa} \nModelo: {Modelo} \nModelo: {Modelo} \nAno: {Ano} \nStatus: {StatusVeiculo}\n";
+            return $"Placa: {Placa} \nModelo: {Modelo} \nAno: {Ano} \nStatus: {StatusVeiculo}\nCategoria: {Categoria.Nome}\n";
+        }
+
+        public void SetCategoria(Categoria categoria)
+        {
+            Categoria = categoria;
         }
     }
 }

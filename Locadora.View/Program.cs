@@ -1,18 +1,246 @@
 ﻿
 using Locadora.Controller;
 using Locadora.Models;
+using Locadora.Models.Enums;
 using Microsoft.Data.SqlClient;
 using Utils.DataBases;
+using Utils.Menus;
+using Locadora.Controller.Menus;
 
-Cliente cliente = new Cliente("Querie", "querie@email.com", "887891422");
-Documento documento = new Documento("RG", "2345885888", new DateOnly(2020, 1, 1), new DateOnly(2030, 2, 20));
 
-//Console.WriteLine(cliente);
+var customer = new ClienteMenu();
+var category = new CategoriaMenu();
+var vehicle = new VeiculoMenu();
+var employeer = new FuncionarioMenu();
+var rental = new MenuLocacao();
 
-var clienteController = new ClienteController();
+int opcao = 0;
+do
+{
+    Console.Clear();
+    Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+    Console.WriteLine(" |     SISTEMA DE LOCADORA DE VEÍCULOS    |");
+    Console.WriteLine(" |----------------------------------------|");
+    Console.WriteLine(" | [ 1 ] Locar Veículo                    |");
+    Console.WriteLine(" | [ 2 ] Menu Veículo                     |");
+    Console.WriteLine(" | [ 3 ] Menu Categoria                   |");
+    Console.WriteLine(" | [ 4 ] Menu Funcionário                 |");
+    Console.WriteLine(" | [ 5 ] Menu Cliente                     |");
+    Console.WriteLine(" | [ 6 ] Voltar                           |");
+    Console.WriteLine(" |-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=|");
+    Console.WriteLine();
+    Console.Write("  >>> Informe o menu desejado: ");
+    string entrada = Console.ReadLine()!;
+    bool conversao = int.TryParse(entrada, out opcao);
+    Console.WriteLine("---------------------------------------");
 
-var categoriaController = new CategoriaController();
+    switch (opcao)
+    {
+        case 1:
+            rental.LocacaoMenu();
+            break;
+        case 2:
+            vehicle.MenuVeiculo();
+            break;
+        case 3:
+            category.MenuCategoria();
+            break;
+        case 4:
+            employeer.MenuFuncionario();
+            break;
+        case 5:
+            customer.MenuCliente();
+            break;
+        case 6:
+            Console.WriteLine("Encerrando o programa...");
+            return;
+        default:
+            Console.WriteLine("\nOpção Inválida. Tente novamente.");
+            break;
+    }
 
+    Console.Write("\n  >  Pressione qualquer Tecla para prosseguir ");
+    Console.ReadLine();
+
+} while (true);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Cliente cliente = new Cliente("Querie", "querie@email.com", "887891422");
+//Documento documento = new Documento("RG", "2345885888", new DateOnly(2020, 1, 1), new DateOnly(2030, 2, 20));
+
+////Console.WriteLine(cliente);
+
+//var clienteController = new ClienteController();
+
+//var categoriaController = new CategoriaController();
+
+//var veiculoController = new VeiculoController();
+
+//var funcionarioController = new FuncionarioController();
+
+//var locacaoController = new LocacaoController();
+
+
+//var funcionarios = new List<int>();
+
+//var locacao = new Locacao(2, 5, 100.00m, 10);
+//locacaoController.AdicionarLocacao(locacao, funcionarios);
+//Console.WriteLine("Locação adicionada com sucesso" + locacao);
+
+
+//var locacoes = locacaoController.ListarLocacaoPorFuncionario(1);
+
+//foreach (var locacao in locacoes)
+//{
+//    Console.WriteLine(locacao);
+//    Console.WriteLine("-----------------------------");
+//}
+//var funcionariosComLocacoes = locacaoController.ListarFuncionariosComLocacoes();
+//var funcionariosLocad = new LocacaoFuncionarioController();
+
+//funcionariosLocad.AssociarFuncionario(
+//    Guid.Parse("4F4D433E-F36B-1410-8FD6-0088CF8AE78A"),
+//    1
+//);
+
+
+
+//foreach (var item in funcionariosComLocacoes)
+//{
+//    var funcionario = item.funcionario;
+//    var locacao = item.locacao;
+
+//    Console.WriteLine($"Funcionario: {funcionario.Nome} - Salario: {funcionario.Salario}");
+
+//    if (locacao != null)
+//    {
+//        Console.WriteLine($"LocacaoID: {locacao.LocacaoID}");
+//        Console.WriteLine($"ClienteID: {locacao.ClienteID}");
+//        Console.WriteLine($"VeiculoID: {locacao.VeiculoID}");
+//        Console.WriteLine($"DataLocacao: {locacao.DataLocacao}");
+//        Console.WriteLine($"ValorDiaria: {locacao.ValorDiaria}");
+//        Console.WriteLine($"Status: {locacao.Status}");
+//    }
+//    else
+//    {
+//        Console.WriteLine("Sem locações para este funcionário.");
+//    }
+
+//    Console.WriteLine("-----------------------------");
+//}
+
+//var veiculo = veiculoController.BuscarVeiculoId(1);
+//Console.WriteLine(veiculo);
+
+
+
+//var locacoes = locacaoController.ListarLocacaoPorFuncionario(1);
+
+//foreach (var locacao in locacoes)
+//{
+//    Console.WriteLine(locacao);
+//}
+
+
+
+
+
+
+//var funcionario = new Funcionario("Aelin Galatynius", "78945612585", "aelin@email.com");
+//funcionarioController.AdicionarFuncionario(funcionario);
+//Console.WriteLine("Funcionário adicionado com sucesso." + funcionario);
+
+
+
+//var funcionarios = funcionarioController.ListarTodosFuncionarios();
+//foreach (var funcionario in funcionarios)
+//{
+//    Console.WriteLine(funcionario);
+//    Console.WriteLine("----------------------");
+//}
+
+//Console.WriteLine(funcionarioController.BuscarFuncionarioPorID(1));
+
+//try
+//{
+//    funcionarioController.AtualizarSalarioFuncionario(id: 1003, salario: 3000.00m);
+//    Console.WriteLine("Salário atualizado com sucesso");
+//}
+//catch(Exception ex)
+//{
+//    Console.WriteLine(ex.Message);
+//}
+
+
+
+
+
+
+//try
+//{
+//    var veiculo = new Veiculo(1, "XYZ-7474", "Fiat", "Uno", 2025, EStatusVeiculo.Disponivel.ToString());
+//    veiculoController.AdicionarVeiculo(veiculo);
+//    Console.WriteLine("Veículo adicionado com sucesso.");
+
+//    var veiculos = veiculoController.ListarTodosVeiculos();
+
+//    foreach (var v in veiculos)
+//    {
+//        Console.WriteLine(v);
+//        Console.WriteLine("--------------------------------");
+//        Console.WriteLine();
+//    }
+//}
+//catch (Exception ex)
+//{
+//    throw new Exception(ex.Message);
+//}
+//var veiculoEncontrado = veiculoController.BuscarVeiculoPorPlaca("XAQ7898");
+//Console.WriteLine(veiculoEncontrado);
+
+
+//var veiculo = veiculoController.BuscarVeiculoPorPlaca("XYZ-7474");
+//veiculoController.DeletarVeiculo(veiculo.VeiculoID);
+//Console.WriteLine(veiculo);
 //try
 //{
 //    clienteController.AdicionarCliente(cliente, documento);
@@ -21,8 +249,24 @@ var categoriaController = new CategoriaController();
 //{
 //    Console.WriteLine(ex.Message);
 //}
-
-
+//    try
+//{
+//    Console.WriteLine(categoriaController.BuscarCategoriaPorNome("Esportivo"));
+//    categoriaController.ExcluirCategoria("Esportivo");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine(ex.Message);
+//}
+//try
+//{
+//    veiculoController.AtualizarStatusVeiculo(EStatusVeiculo.Manutencao.ToString(), "ABC1234");
+//    Console.WriteLine(veiculoController.BuscarVeiculoPorPlaca("ABC1234"));
+//}
+//catch(Exception ex)
+//{
+//    throw new Exception(ex.Message);
+//}
 
 //try
 //{
@@ -67,9 +311,10 @@ var categoriaController = new CategoriaController();
 
 //try
 //{
-//   categoriaController.AdicionarCategoria(categoria);
-//   Console.WriteLine("Categoria adicionada com sucesso");}
-//catch(Exception ex)
+//    categoriaController.AdicionarCategoria(categoria);
+//    Console.WriteLine("Categoria adicionada com sucesso");
+//}
+//catch (Exception ex)
 //{
 //    Console.WriteLine("Erro ao adicionar categoria");
 //    Console.WriteLine(ex.Message);
@@ -100,13 +345,16 @@ var categoriaController = new CategoriaController();
 
 //try
 //{
-//    var categoria = categoriaController.BuscaCategoriaPorNome("SUV");
+//    var categoria = categoriaController.BuscaCategoriaPorId(1);
 //    Console.WriteLine(categoria);
 //}
 //catch (Exception ex)
 //{
 //    Console.WriteLine("Categoria não encontrada." + ex.Message);
 //}
+
+
+
 
 
 
@@ -127,14 +375,14 @@ var categoriaController = new CategoriaController();
 
 //AtualizarCategoria
 
-try
-{
-    
-    categoriaController.AtualizarDescricaoCategoria("SUV", "Veiculo grande e espaçoso");
-    Console.WriteLine("Categoria atualizada com sucesso");
-}
-catch (Exception ex)
-{
-    Console.WriteLine(ex.Message);
-}
+//try
+//{
+
+//    categoriaController.AtualizarDescricaoCategoria("SUV", "Veiculo grande e espaçoso");
+//    Console.WriteLine("Categoria atualizada com sucesso");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine(ex.Message);
+//}
 
